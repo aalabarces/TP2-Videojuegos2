@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ede997306945b544ac0a5df70369b77, type: 3}
+  m_Name: SpeakerDr
+  m_EditorClassIdentifier: 
+  speakerImage: {fileID: 21300000, guid: 9bd56845cc8b2424f86cdb7fa3c4dbcf, type: 3}
+  speakerName: "Dr. Crom\xE1tico"
+  script:
+  - dialogueKey: Act3_Intro_1
+    dialogueText: "\xA1Ja ja ja, nunca podr\xE1s derrotarme, amigue de Agust\xEDn
+      / docente que est\xE1 jugando a este juego!"
+  - dialogueKey: Act3_Intro_2
+    dialogueText: "Tu arco de desarrollo de personaje en tres actos no ser\xE1 suficiente
+      frente a mis poderes RGB."
+  - dialogueKey: Act3_Defeat_1
+    dialogueText: "Ni todos los continues del mundo te ser\xE1n suficientes para
+      vencerme"
+  - dialogueKey: Act3_Victory_1
+    dialogueText: "\xBFC\xF3mo es posible que yo, la m\xE1s avanzada IA de tanquecitos,
+      pierda ante este... este... JUGADOR?"

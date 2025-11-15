@@ -1,0 +1,76 @@
+pantalla cargando...
+routine yield 2 segundos
+-Qué voy a estar cargando, soy un TP de 100mb. Apretá cualquier cosa, máster
+
+Disclaimer:
+Bienvenido a una experiencia interactiva de bajo presupuesto
+Con este juego me voy a recibir. ¡Viva yo!              -pau dice que chaboncito bailando
+Espero que lo disfrutes mucho.
+Apretá en el botón de formulario para dejar tus opiniones.
+
+
+/
+--Primer acto--
+Un tanquecito endemoniado
+
+Detené a tus enemigos antes de que lleguen al otro extremo
+/
+
+Sos el tanque, te movés, disparás
+fondo feo. movimiento torpe
+enemigo base, enemigo rápido
+empieza lento. bug en el timer
+después de un rato (10s?):
+
+1.a:
+"Está aburrido esto, ¿no?"
+"Así era el tp 1 que entregué
+Merecidísimo el 4"
+"Vamos a ponerle un poco más de onda"
+
+se "arregla" el timer (timer paralelo que vaya bien)
+más corto?
+fondo lindo
+todo más grande
+aparece el heavy, que resiste más
+termina con el timer
+
+/
+Segundo acto
+Oda a la belicosidad
+/ o /
+Pium pium bang bang
+
+Matá. Sobreviví.
+Sé como tus enemigos para vencerlos.        -sé y vencerlos van cambiando por los colores posibles cada segundo, ambas del mismo color
+/
+
+aparecen los de colores y espacios para ser de ese color (que sean relativamente grandes. juego fácil)
+enemigo que te va a chocar con todo
+enemigo que dispara
+
+/
+Tercer acto
+Kill Boss
+
+Hacé uso de todo lo aprendido en esta aventura
+y vencé al enemigo final
+/
+
+Dr. Cromático:
+¡Ja ja ja, nunca podrás derrotarme, amigue de Agustín / docente que está jugando a este juego!
+Tu arco de desarrollo de personaje en tres actos no será suficiente frente a mis poderes RGB.
+
+Victoria:
+¿Cómo es posible que yo, la más avanzada IA de tanquecitos, pierda ante este... este... JUGADOR?
+
+Felicitaciones, salvaste al tanquemundo del malvado Dr. Cromático. Toda la tanquerealidad puede descansar en paz y a todo color gracias a tus hazañas.       -arcoiris de fondo
+¡Y ayudaste a que Agus se reciba!
+
+
+Perdiste
+No todo en la vida es ganar
+Podés probar de nuevo
+Hasta hay checkpoints
+
+Pero te mo

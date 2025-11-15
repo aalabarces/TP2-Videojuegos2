@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 629435c6fee7cc24c806ccd1d9ead816, type: 3}
+  m_Name: LevelsConfig
+  m_EditorClassIdentifier: 
+  levels:
+  - act: 1
+    timer: 20
+    enemyData:
+      availableEnemies:
+      - name: EnemyBasic
+        spawnProbability: 1
+      firstEnemyType: EnemyBasic
+      maxEnemiesAtOnce: 4
+    titles:
+      act: 1
+      title: Primer acto
+      subtitle: Un tanquecito endemoniado
+      description: "Deten\xE9 a tus enemigos antes de que lleguen al otro extremo"
+    availableLoot:
+      HealthPack: 0
+      PowerUp:
+        SpeedBoost: 0
+        DamageBoost: 0
+  - act: 1.5
+    timer: 60
+    enemyData:
+      availableEnemies:
+      - name: EnemyBasic
+        spawnProbability: 0.6
+      - name: EnemyFast
+        spawnProbability: 0.3
+      - name: EnemyHeavy
+        spawnProbability: 0.1
+      firstEnemyType: EnemyFast
+      maxEnemiesAtOnce: 7
+    titles:
+      act: 0
+      title: 
+      subtitle: 
+      description: 
+    availableLoot:
+      HealthPack: 0
+      PowerUp:
+        SpeedBoost: 0
+        DamageBoost: 0
+  - act: 2
+    timer: 120
+    enemyData:
+      availableEnemies:
+      - name: EnemyBasic
+        spawnProbability: 0.3
+      - name: EnemyFast
+        spawnProbability: 0.2
+      - name: EnemyHeavy
+        spawnProbability: 0.1
+      - name: EnemyBlue
+        spawnProbability: 0.2
+      - name: EnemyGreen
+        spawnProbability: 0.2
+      firstEnemyType: EnemyBlue
+      maxEnemiesAtOnce: 10
+    titles:
+      act: 2
+      title: Segundo Acto
+      subtitle: Oda a la belicosidad \n/ o /\n Pium pium bang bang
+      description: "Mat\xE1. Sobreviv\xED.\\nS\xE9 como tus enemigos para vencerlos. "
+    availableLoot:
+      HealthPack: 0
+      PowerUp:
+        SpeedBoost: 0
+        DamageBoost: 0
+  - act: 3
+    timer: 120
+    enemyData:
+      availableEnemies:
+      - name: EnemyBoss
+        spawnProbability: 1
+      firstEnemyType: EnemyBoss
+      maxEnemiesAtOnce: 1
+    titles:
+      act: 3
+      title: Tercer acto
+      subtitle: Kill Boss
+      description: "Hac\xE9 uso de todo lo aprendido en esta aventura\\ny venc\xE9
+        al enemigo final"
+    availableLoot:
+      HealthPack: 0
+      PowerUp:
+        SpeedBoost: 0
+        DamageBoost: 0

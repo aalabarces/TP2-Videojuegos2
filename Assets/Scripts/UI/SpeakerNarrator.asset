@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ede997306945b544ac0a5df70369b77, type: 3}
+  m_Name: SpeakerNarrator
+  m_EditorClassIdentifier: 
+  speakerImage: {fileID: 21300000, guid: 52994b2e1bbff35409788e12f02002af, type: 3}
+  speakerName: Narrador
+  script:
+  - dialogueKey: Ending1
+    dialogueText: "Felicitaciones, salvaste al tanquemundo del malvado Dr. Crom\xE1tico"
+  - dialogueKey: Ending2
+    dialogueText: "Toda la tanquerealidad puede descansar en paz y a todo color gracias
+      a tus haza\xF1as."
+  - dialogueKey: Ending3
+    dialogueText: "\xA1Y ayudaste a que Agus se reciba!"

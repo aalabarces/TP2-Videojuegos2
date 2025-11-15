@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ede997306945b544ac0a5df70369b77, type: 3}
+  m_Name: SpeakerAgus
+  m_EditorClassIdentifier: 
+  speakerImage: {fileID: 21300000, guid: f5565b2f07192bc448f6de191591f104, type: 3}
+  speakerName: Agustincito
+  script:
+  - dialogueKey: Act1_Intro_1
+    dialogueText: Bienvenido a una experiencia interactiva de bajo presupuesto
+  - dialogueKey: Act1_Intro_2
+    dialogueText: "Con este juego me voy a recibir. \xA1Viva yo!"
+  - dialogueKey: Act1_Intro_3
+    dialogueText: Espero que lo disfrutes mucho.
+  - dialogueKey: Act1_Intro_4
+    dialogueText: "Apret\xE1 en el bot\xF3n de formulario para dejar tus opiniones."
+  - dialogueKey: Act1_Ending_1
+    dialogueText: "Est\xE1 aburrido esto, \xBFno?"
+  - dialogueKey: Act1_Ending_2
+    dialogueText: "As\xED era el tp 1 que entregu\xE9. Merecid\xEDsimo el 4."
+  - dialogueKey: Act1_Ending_3
+    dialogueText: "Vamos a ponerle un poco m\xE1s de onda..."

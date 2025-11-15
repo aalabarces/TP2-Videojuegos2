@@ -1,0 +1,98 @@
+{
+    "levels": [
+        {
+            "act": 1,
+            "timer": 60,
+            "availableEnemies": {
+                "EnemyBasic": 1.0
+            },
+            "firstEnemy": "EnemyBasic",
+            "titles": {
+                "act": 1,
+                "title": "Primer acto",
+                "subtitle": "Un tanquecito endemoniado",
+                "description": "Detené a tus enemigos antes de que lleguen al otro extremo",
+                "animation": null
+            },
+            "availableLoot": {
+                "HealthPack": 0,
+                "PowerUp": {
+                    "SpeedBoost": 0,
+                    "DamageBoost": 0
+                }
+            }
+        },
+        {
+            "act": 1.5,
+            "timer": 60,
+            "availableEnemies": {
+                "EnemyBasic": 0.6,
+                "EnemyFast": 0.3,
+                "EnemyHeavy": 0.1
+            },
+            "firstEnemy": "EnemyFast",
+            "titles": {
+                "act": null,
+                "title": null,
+                "subtitle": null,
+                "description": null,
+                "animation": null
+            },
+            "availableLoot": {
+                "HealthPack": 2,
+                "PowerUp": {
+                    "SpeedBoost": 1,
+                    "DamageBoost": 3
+                }
+            }
+        },
+        {
+            "act": 2,
+            "timer": 120,
+            "availableEnemies": {
+                "EnemyBasic": 0.4,
+                "EnemyFast": 0.2,
+                "EnemyHeavy": 0.1,
+                "EnemyColored": 0.3
+            },
+            "firstEnemy": "EnemyColored",
+            "titles": {
+                "act": 2,
+                "title": "Segundo acto",
+                "subtitle": "Oda a la belicosidad\n/ o /\nPium pium bang bang",
+                "description": "Matá. Sobreviví.\nSé como tus enemigos para vencerlos.",
+                "animation": "Level2Intro"
+            },
+            "availableLoot": {
+                "HealthPack": 1,
+                "PowerUp": {
+                    "SpeedBoost": 2,
+                    "DamageBoost": 1
+                }
+            }
+        },
+        {
+            "act": 3,
+            "timer": null,
+            "fakeTimer": null,
+            "availableEnemies": {
+                "Boss": 1
+            },
+            "firstEnemy": "Boss",
+            "titles": {
+                "act": 3,
+                "title": "Tercer acto",
+                "subtitle": "Kill Boss",
+                "description": "Hacé uso de todo lo aprendido en esta aventura\ny vencé al enemigo final",
+                "animation": null
+            },
+            "availableLoot": {
+                "HealthPack": 0,
+                "PowerUp": {
+                    "SpeedBoost": 3,
+                    "DamageBoost": 2
+                }
+            }
+        }
+    ]
+}
