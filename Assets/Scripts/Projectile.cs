@@ -2,17 +2,23 @@ using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(Animator))]
 public class Projectile : MonoBehaviour
 {
     private Rigidbody2D rb;
+    private Animator animator;
+    private AudioSource audioSource;
     [SerializeField] private float speed = 10f;
     [SerializeField] private float strength = 1f;
     private Vector2 direction = Vector2.up;
-    private Color color = Color.white;
+    [SerializeField] private Color color = Color.white;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
         MoveAccordingToSpeedAndDirection();
         // Debug.Log($"Projectile fired in direction {direction} with speed {speed} and strength {strength}");
     }
@@ -32,6 +38,12 @@ public class Projectile : MonoBehaviour
         color = col;
     }
 
+    public void OnEnable()
+    {
+        animator.SetBool("die", false);
+        animator.Play("Move", 0, 0f);
+    }
+
     private void MoveAccordingToSpeedAndDirection()
     {
         Vector2 movement = direction * speed * Time.deltaTime;
@@ -39,19 +51,35 @@ public class Projectile : MonoBehaviour
         rb.rotation = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
         if (Utils.Instance.IsOutOfBounds(transform.position, 1.0f))
         {
-            SpawnManager.Instance.ReturnProjectileToPool(gameObject);
+            TellSpawnManagerToKillMe();
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
+        Debug.Log("Projectile collided with " + collision.gameObject.name);
         if (collision.gameObject.layer != LayerMask.NameToLayer("Interactable"))
             return;
         if (collision.gameObject.CompareTag("Enemy"))
         {
             collision.gameObject.GetComponent<Enemy>().GetHit(strength, color);
         }
-        SpawnManager.Instance.ReturnProjectileToPool(gameObject);
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            collision.gameObject.GetComponent<Player>().LoseLife();
+            // por qué no tiene un GetHit? Eso no es muy "objetoso"
+            // todos los que pueden recibir daño tendrían que tener un componente común
+        }
+        if (!collision.gameObject.CompareTag("TriggerButton"))
+        {
+            audioSource.Play();
+            animator.SetBool("die", true);
+            direction = Vector2.zero; // stop moving
+        }
     }
 
+    public void TellSpawnManagerToKillMe()
+    {
+        SpawnManager.Instance.ReturnProjectileToPool(gameObject);
+    }
 }

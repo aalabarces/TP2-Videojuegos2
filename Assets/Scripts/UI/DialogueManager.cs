@@ -25,6 +25,10 @@ public class DialogueManager : MonoBehaviour
     {
         characterNameText.text = newName;
     }
+    public void ChangeCharacterPortraitSprite(Sprite newSprite)
+    {
+        portraitPanel.GetComponent<UnityEngine.UI.Image>().sprite = newSprite;
+    }
     private IEnumerator TypeTextCoroutine(string dialogue)
     {
         dialogueText.text = "";
@@ -61,6 +65,10 @@ public class DialogueManager : MonoBehaviour
         UIManager.Instance.dialogue.SetActive(true);
         switch (sequenceKey)
         {
+            // Acá tendria que haber un código que se ejecute automáticamente
+            // Si hay intro, la pone. Si no, saltea
+            // Si hay outro, la pone. Si no, saltea
+            // La duración ya venga definida en el ScriptableObject
             case "Act1_Intro":
                 Debug.Log("Starting Act 1 Intro Dialogue");
                 yield return Speaker_Play_Key_Lines(agus, "Act1_Intro", 3);
@@ -72,18 +80,20 @@ public class DialogueManager : MonoBehaviour
                 break;
             case "Act3_Intro":
                 Debug.Log("Starting Act 3 Intro Dialogue");
-                yield return Speaker_Play_Key_Lines(doctor, "Act3_Intro", 3);
+                yield return Speaker_Play_Key_Lines(doctor, "Act3_Intro", 2);
                 break;
             case "DefeatAct3":
                 Debug.Log("Starting Act 3 Defeat Dialogue");
-                yield return Speaker_Play_Key_Lines(doctor, "Act3_Defeat", 2);
+                yield return Speaker_Play_Key_Lines(doctor, "Act3_Defeat", 1);
                 break;
             case "VictoryAct3":
                 Debug.Log("Starting Act 3 Victory Dialogue");
                 // TODO: AudioManager play victory music
-                yield return Speaker_Play_Key_Lines(doctor, "Act3_Victory", 2);
+                yield return Speaker_Play_Key_Lines(doctor, "Act3_Victory", 1);
+                break;
+            case "Ending":
                 Debug.Log("Starting Narrator Ending Dialogue");
-                yield return Speaker_Play_Key_Lines(narrator, "Ending", 2);
+                yield return Speaker_Play_Key_Lines(narrator, "Ending", 3);
                 yield return new WaitUntil(() => Input.anyKeyDown);
 
                 break;
@@ -100,7 +110,7 @@ public class DialogueManager : MonoBehaviour
         {
             string dialogueKey = key + "_" + i;
             string dialogue = speaker.GetDialogueByKey(dialogueKey).dialogueText;
-            portraitPanel.GetComponent<UnityEngine.UI.Image>().sprite = speaker.speakerImage;
+            ChangeCharacterPortraitSprite(speaker.speakerImage);
             ChangeCharacterNameText(speaker.speakerName);
             yield return TypeTextCoroutine(dialogue);
             yield return new WaitUntil(() => Input.anyKeyDown);

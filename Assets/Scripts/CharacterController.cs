@@ -17,10 +17,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     public int currentLives { get; private set; } = 3;
     [SerializeField]
-    private float thrustSpeed = 10f;
-    // Speed boost when Left Shift is held
-    // Implemented, but not communicated to the player. Shhhhhh!
-    [SerializeField]
     private float speed = 10.0f;
     [SerializeField]
     private float rotationSpeed = 200.0f;
@@ -47,6 +43,7 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         if (!GameManager.Instance.isGameActive) return;
+        rb.angularVelocity = 0f;
         Movement();
     }
 
@@ -55,7 +52,7 @@ public class Player : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
-        Vector2 move = transform.up * -verticalInput * speed * (Input.GetKeyDown(KeyCode.LeftShift) ? thrustSpeed : 1.0f);
+        Vector2 move = transform.up * -verticalInput * speed;
         Vector2 newPosition = rb.position + move * Time.fixedDeltaTime;
 
         newPosition = Utils.Instance.GetClampedPosition(newPosition);
@@ -107,7 +104,7 @@ public class Player : MonoBehaviour
             Debug.Log("Collided with an enemy!");
             LoseLife();
             Debug.Log("Lives remaining: " + currentLives);
-            collision.gameObject.GetComponent<Enemy>().Die();
+            collision.gameObject.GetComponent<Enemy>().GetHit(1, collision.gameObject.GetComponent<Enemy>().color);
         }
     }
     private void OnTriggerEnter2D(Collider2D other)
@@ -118,8 +115,9 @@ public class Player : MonoBehaviour
         {
             Debug.Log($"Collided with a Trigger Button! Changing color from {spriteRenderer.color} to {other.gameObject.GetComponent<SpriteRenderer>().color}");
             Color otherColor = other.gameObject.GetComponent<SpriteRenderer>().color;
-            spriteRenderer.color = otherColor;
-            cannonSpriteRenderer.color = otherColor;
+            Color otherColorWithoutAlpha = new Color(otherColor.r, otherColor.g, otherColor.b, 1f);
+            spriteRenderer.color = otherColorWithoutAlpha;
+            cannonSpriteRenderer.color = otherColorWithoutAlpha;
         }
     }
     private void OnTriggerExit2D(Collider2D other)
@@ -175,10 +173,30 @@ public class Player : MonoBehaviour
             // Invoke(nameof(allowFiringAgain), fireRate);
             cannon.GetComponent<Animator>().SetBool("isFiring", true);
             cannon.GetComponent<AimingScript>().PlayCannonSound();
+
+            Invoke(nameof(ResetFiringState), fireRate);
+            // se suponía que esto (resetear el estado de disparo) iba en el fin de la animación
+            // se llamaba desde el proyectil onCollisionEnter, pero se bugueaba si disparabas mucho rápido
         }
         else
         {
             Debug.Log("No projectiles available in pool!");
         }
+    }
+
+    public void ResetFiringState()
+    {
+        SetFiringState(false);
+        cannon.GetComponent<Animator>().SetBool("isFiring", false);
+    }
+
+    public void ResetPlayer()
+    {
+        currentLives = 3;
+        UIManager.Instance.UpdateLives(currentLives);
+        transform.position = Vector3.zero;
+        transform.rotation = Quaternion.identity;
+        spriteRenderer.color = Color.white;
+        cannonSpriteRenderer.color = Color.white;
     }
 }

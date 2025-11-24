@@ -1,10 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
+    public AudioMixer audioMixer;
+    public float masterVolume = 1.0f;
+    public float musicVolume = 1.0f;
+    public float fxVolume = 1.0f;
     [SerializeField] private AudioSource musicMenu;
     [SerializeField] private AudioSource musicGame;
     [SerializeField] private AudioSource UI_Click;
@@ -63,5 +68,34 @@ public class AudioManager : MonoBehaviour
         {
             sound.Stop();
         }
+    }
+
+    public void SetMasterVolume(float volume)
+    {
+        masterVolume = volume;
+
+        // Convertimos volumen lineal (0–1) a dB (-80 a 0)
+        float dB = Mathf.Log10(Mathf.Clamp(volume, 0.0001f, 1f)) * 20f;
+        audioMixer.SetFloat("MasterVolume", dB);
+
+        PlayerPrefs.SetFloat("MasterVolume", volume);
+    }
+    public void SetMusicVolume(float volume)
+    {
+        musicVolume = volume;
+
+        // Convertimos volumen lineal (0–1) a dB (-80 a 0)
+        float dB = Mathf.Log10(Mathf.Clamp(volume, 0.0001f, 1f)) * 20f;
+        audioMixer.SetFloat("MusicVolume", dB);
+        PlayerPrefs.SetFloat("MusicVolume", volume);
+    }
+    public void SetFXVolume(float volume)
+    {
+        fxVolume = volume;
+
+        // Convertimos volumen lineal (0–1) a dB (-80 a 0)
+        float dB = Mathf.Log10(Mathf.Clamp(volume, 0.0001f, 1f)) * 20f;
+        audioMixer.SetFloat("FXVolume", dB);
+        PlayerPrefs.SetFloat("FXVolume", volume);
     }
 }

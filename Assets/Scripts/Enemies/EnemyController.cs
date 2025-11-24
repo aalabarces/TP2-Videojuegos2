@@ -20,9 +20,9 @@ public class Enemy : MonoBehaviour
     public Vector2 currentVelocity = Vector2.zero;
     [SerializeField] public float baseHealth = 1f;
     [SerializeField] protected float health = 1f;
-    [SerializeField] protected Color color = Color.white;
+    [SerializeField] public Color color = Color.white;
     [SerializeField] public string enemyType = "EnemyBasic";
-    private Dictionary<string, IEnemyState> states = new Dictionary<string, IEnemyState>();
+    [SerializeField] public Dictionary<string, IEnemyState> states {get; private set;} = new Dictionary<string, IEnemyState>();
     public IEnemyState currentState;
     void Awake()
     {
@@ -31,9 +31,7 @@ public class Enemy : MonoBehaviour
         // Debug.Log("Animator found: " + animator);
         audioSource = GetComponent<AudioSource>();
         sr = GetComponent<SpriteRenderer>();
-    }
-    void Start()
-    {
+
         states.Add("Simple", new SimpleState());
         states.Add("Flee", new FleeState());
         states.Add("Seek", new SeekState());
@@ -42,6 +40,7 @@ public class Enemy : MonoBehaviour
         
         extraMargin = Mathf.Max(sr.bounds.extents.x, sr.bounds.extents.y) + 0.1f;
     }
+
     protected virtual void FixedUpdate()
     {
         if (!GameManager.Instance.isGameActive) return;
@@ -52,6 +51,7 @@ public class Enemy : MonoBehaviour
     {
         if (!GameManager.Instance.isGameActive) return;
         currentState.UpdateState(this);
+        RotateSpriteAccordingToVelocity();
         if (Utils.Instance.IsOutOfBounds(transform.position, extraMargin, direction))
         {
             HandleOutOfBounds();
@@ -75,7 +75,8 @@ public class Enemy : MonoBehaviour
 
     public void GetHit(float damage, Color col)
     {
-        if (color != col) return;
+        Debug.Log($"Enemy of type {enemyType} got hit with damage {damage} and color {col}. Current health: {health}. Current color: {color}");
+        if (color != col) return;   // ALPHA ERROR
         health -= damage;
         if (health <= 0)
         {
@@ -84,13 +85,18 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void Die()
+    public virtual void Die()
     {
         animator.SetBool("isDead", true);
         audioSource.Play();
         Utils.Instance.ChangeLayerTo(this.gameObject, "Non-interactable");
         GameManager.Instance.PlayerKilledEnemy(gameObject);
-        Invoke(nameof(TellSpawnManagerToKillMe), 0.5f);
+        // Invoke(nameof(TellSpawnManagerToKillMe), 0.5f);
+    }
+
+    private void OnEnable()
+    {
+        ResetState();
     }
 
     public void ResetState()
@@ -98,24 +104,16 @@ public class Enemy : MonoBehaviour
         health = baseHealth;
         rb.velocity = Vector2.zero;
         Utils.Instance.ChangeLayerTo(this.gameObject, "Interactable");
-        ResetDirection();
-        // Debug.Log(animator);
         if (animator != null) animator.SetBool("isDead", false);
-        // Debug.Log("Enemy layer: " + gameObject.layer);
-    }
-
-    private void ResetDirection()
-    {
         direction = (transform.position.x > 0) ? Vector3.left : Vector3.right;
-        Debug.Log("Enemy direction reset to: " + direction);
     }
-
+    
     public void TellSpawnManagerToKillMe()
     {
         SpawnManager.Instance.KillSpawn(gameObject);
     }
 
-    public void HandleOutOfBounds()
+    public virtual void HandleOutOfBounds()
     {
         if (currentState == states["Simple"])
         {
@@ -131,6 +129,8 @@ public class Enemy : MonoBehaviour
         Vector2 desiredVelocity = (position - playerPos).normalized * maxSpeed;
         Vector2 steering = desiredVelocity - currentVelocity;
         currentVelocity += steering * Time.fixedDeltaTime;
+
+        currentVelocity = currentVelocity.normalized * maxSpeed;
     }
     public void GoToPlayer()
     {
@@ -139,6 +139,17 @@ public class Enemy : MonoBehaviour
         Vector2 desiredVelocity = (playerPos - position).normalized * maxSpeed;
         Vector2 steering = desiredVelocity - currentVelocity;
         currentVelocity += steering * Time.fixedDeltaTime;
+
+        currentVelocity = currentVelocity.normalized * maxSpeed;
+    }
+
+    public void RotateSpriteAccordingToVelocity()
+    {
+        if (currentVelocity.magnitude > 0.1f)
+        {
+            float angle = Mathf.Atan2(currentVelocity.y, currentVelocity.x) * Mathf.Rad2Deg - 180f;
+            sr.transform.rotation = Quaternion.Euler(0, 0, angle - 90);
+        }
     }
     private void LevelUp()
     {

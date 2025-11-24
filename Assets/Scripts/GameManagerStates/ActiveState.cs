@@ -13,13 +13,25 @@ public class ActiveState : IGameState
     {
         if (!manager.isGameActive) return;
         manager.handleTimer();
-        if (Input.GetMouseButtonDown(0) && manager.isGameActive)
+        if (Input.GetMouseButtonDown(0))
         {
             handleClick(manager);
         }
         if (Input.GetKeyDown(KeyCode.P) && Input.GetKey(KeyCode.LeftShift))
         {
             manager.SetTimerTo(1f);
+        }
+        if (Input.GetKeyDown(KeyCode.L) && Input.GetKey(KeyCode.LeftShift))
+        {
+            if (manager.currentLevel != 3f) return;
+            SpawnManager.Instance.currentSpawned.ForEach(enemyGO =>
+            {
+                Enemy enemy = enemyGO.GetComponent<Enemy>();
+                if (enemy is Boss boss)
+                {
+                    boss.CheatKill();
+                }
+            });
         }
     }
 

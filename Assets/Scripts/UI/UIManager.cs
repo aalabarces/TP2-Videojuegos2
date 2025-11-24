@@ -7,6 +7,9 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
+    [SerializeField] public GameObject pauseMenu;
+    [SerializeField] public Button pauseBackBtn;
+    [SerializeField] public Button pauseExitBtn;
     [SerializeField] public TextMeshProUGUI scoreText;
     [SerializeField] public TextMeshProUGUI livesText;
     [SerializeField] public TextMeshProUGUI timerText;
@@ -70,6 +73,7 @@ public class UIManager : MonoBehaviour
         defeatScreen.SetActive(false);
         restartBtn.gameObject.SetActive(false);
         dialogue.SetActive(false);
+        pauseMenu.SetActive(false);
     }
 
     public void UpdateScore(int newScore)
@@ -126,13 +130,15 @@ public class UIManager : MonoBehaviour
 
     public void ShowPauseMenu()
     {
-        alertsText.gameObject.SetActive(true);
-        UpdateAlerts("Game Paused");
+        // alertsText.gameObject.SetActive(true);
+        // UpdateAlerts("Game Paused");
+        pauseMenu.SetActive(true);
     }
 
     public void HidePauseMenu()
     {
-        alertsText.gameObject.SetActive(false);
+        // alertsText.gameObject.SetActive(false);
+        pauseMenu.SetActive(false);
     }
 
     public void OnRestartButtonClicked()
@@ -171,5 +177,14 @@ public class UIManager : MonoBehaviour
         {
             trigger.SetActive(false);
         }
+    }
+
+    public void BackToMainMenu()
+    {
+        GlobalSceneManager.Instance.GoToMainMenu();
+    }
+    public void ResumeGameplay()
+    {
+        GameManager.Instance.ChangeState(GameManager.Instance.gameStates["Active"]);
     }
 }

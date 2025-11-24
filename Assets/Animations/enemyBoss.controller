@@ -46,7 +46,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 361e66fea7bedb748abd2f9647ec7f54, type: 2}
+  m_Motion: {fileID: 7400000, guid: 0e3c6a618ef9adb49933e35fbb427577, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -85,7 +85,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: enemyHuge
+  m_Name: enemyBoss
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: isMoving

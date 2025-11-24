@@ -95,6 +95,8 @@ public class GameManager : MonoBehaviour
             Debug.Log("Getting references...");
             yield return GetReferences();
         }
+        ResetState();
+        // Start SpawnManager loop if not started
         if (SpawnManager.Instance.loopHasStarted == false)
         {
             Debug.Log("Starting SpawnManager loop...");
@@ -120,6 +122,7 @@ public class GameManager : MonoBehaviour
         if (currentLevelData.titles.title != "")
         {
             // Show Act Title Screen
+            if (act == 2f) StartCoroutine(uiManager.title.StartColorTitleCoroutine());
             uiManager.title.SetupTitles(currentLevelData.titles);
             yield return uiManager.title.ShowTitle();
         }
@@ -135,11 +138,13 @@ public class GameManager : MonoBehaviour
                 UIManager.Instance.HideFakeBack();
                 break;
             case 2f:
+                Debug.Log("Starting Act 2 intro dialogue...");
                 UIManager.Instance.HideFakeBack();
+                SpawnManager.Instance.ChangeEnemyStatesToSeek();
                 break;
             case 3f:
                 UIManager.Instance.HideFakeBack();
-            ChangeState(gameStates["Dialogue"]);
+                ChangeState(gameStates["Dialogue"]);
                 yield return DialogueManager.Instance.PlayDialogueSequence("Act3_Intro");
                 yield return new WaitUntil(() => Input.anyKey);
                 break;
@@ -235,16 +240,6 @@ public class GameManager : MonoBehaviour
         uiManager.UpdateScore(score);
     }
 
-    private void handleEscapeKey()
-    {
-        // tendría que fijarse que ya haya entrado al gameplay
-        // TODO: if escena < 2 return
-        ChangeState(isGameActive ? gameStates["Pause"] : gameStates["Active"]);
-        uiManager.alertsText.gameObject.SetActive(isGameActive == false);
-        uiManager.UpdateAlerts(isGameActive ? "" : "Game Paused");
-        return;
-    }
-
     public void handleTimer()
     {
         if (!timerIsActive) return;
@@ -281,14 +276,6 @@ public class GameManager : MonoBehaviour
             case 2f:
                 StartCoroutine(StartAct(3f));
                 break;
-            case 3f:
-                ChangeState(gameStates["Dialogue"]);
-                uiManager.ShowVictoryScreen();
-                yield return DialogueManager.Instance.PlayDialogueSequence("VictoryAct3");
-                yield return new WaitUntil(() => Input.anyKey);
-                ChangeState(gameStates["Inactive"]);
-                SceneManager.LoadScene("Menu");
-                break;
             default:
                 break;
         }
@@ -316,5 +303,24 @@ public class GameManager : MonoBehaviour
     public void SetTimerTo(float newTime)
     {
         gameTimer = newTime;
+    }
+
+    public IEnumerator BossDefeated(Boss boss)
+    {
+        ChangeState(gameStates["Dialogue"]);
+        yield return DialogueManager.Instance.PlayDialogueSequence("VictoryAct3");
+        uiManager.ShowVictoryScreen();
+        yield return DialogueManager.Instance.PlayDialogueSequence("Ending");
+        yield return new WaitUntil(() => Input.anyKey);
+        // TODO: Credits
+        ChangeState(gameStates["Inactive"]);
+        SceneManager.LoadScene("Menu");
+    }
+
+    public void ResetState()
+    {
+        player.ResetPlayer();
+        SpawnManager.Instance.RetrieveAllEnemies();
+        SpawnManager.Instance.RetrieveAllProjectiles();
     }
 }

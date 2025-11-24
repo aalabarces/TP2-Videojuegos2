@@ -4,7 +4,7 @@ public class InactiveAudioState : IAudioState
 {
     public void EnterState(AudioManager manager)
     {
-        manager.StopAllSounds();
+        // manager.StopAllSounds();
     }
 
     public void ExitState(AudioManager manager)

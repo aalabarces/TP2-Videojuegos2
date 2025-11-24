@@ -14,6 +14,9 @@ public class Title : MonoBehaviour
     [SerializeField] private float displayDelay = 2.0f;
     private bool skipTitle = false;
     private List<TMPro.TextMeshProUGUI> textElements;
+    public bool isPlayingColorCoroutine { get; private set; } = false;
+    [SerializeField] private float colorAnimationDuration = 1.0f;
+    [SerializeField] private List<Color> colorCycle = new List<Color>() { Color.white, Color.blue, Color.green };
 
     void Awake()
     {
@@ -21,9 +24,9 @@ public class Title : MonoBehaviour
         subtitleText = titlePanel.transform.Find("SubtitleText").GetComponent<TMPro.TextMeshProUGUI>();
         explanationText = titlePanel.transform.Find("ExplanationText").GetComponent<TMPro.TextMeshProUGUI>();
         backgroundPanel = titlePanel.transform.Find("BackgroundPanel").gameObject;
-        Debug.Log("Title component initialized.");
-        Debug.Log("Title texts found: " + titleText.text + ", " + subtitleText.text + ", " + explanationText.text);
-        Debug.Log("Background panel found: " + backgroundPanel.name);
+        // Debug.Log("Title component initialized.");
+        // Debug.Log("Title texts found: " + titleText.text + ", " + subtitleText.text + ", " + explanationText.text);
+        // Debug.Log("Background panel found: " + backgroundPanel.name);
         textElements = new List<TMPro.TextMeshProUGUI>() { titleText, subtitleText, explanationText };
         foreach (var textElement in textElements)
         {
@@ -43,15 +46,15 @@ public class Title : MonoBehaviour
 
     public void ChangeTitleText(string newTitle)
     {
-        titleText.text = newTitle;
+        titleText.text = newTitle.Replace("\\n", "\n");
     }
     public void ChangeSubtitleText(string newSubtitle)
     {
-        subtitleText.text = newSubtitle;
+        subtitleText.text = newSubtitle.Replace("\\n", "\n");
     }
     public void ChangeExplanationText(string newExplanation)
     {
-        explanationText.text = newExplanation;
+        explanationText.text = newExplanation.Replace("\\n", "\n");
     }
 
     public IEnumerator ShowTitle()
@@ -85,6 +88,7 @@ public class Title : MonoBehaviour
             {
                 Debug.Log("Key pressed, stopping title screen...");
                 skipTitle = true;
+                isPlayingColorCoroutine = false;
                 yield return PlayFadeOutAll();
                 yield break;
             }
@@ -127,6 +131,8 @@ public class Title : MonoBehaviour
             textElement.gameObject.SetActive(false);
         }
         backgroundPanel.SetActive(false);
+        isPlayingColorCoroutine = false;
+        explanationText.color = Color.white;
     }
 
     public void HideInstantly()
@@ -138,4 +144,36 @@ public class Title : MonoBehaviour
         }
         backgroundPanel.SetActive(false);
     }
+
+    public IEnumerator StartColorTitleCoroutine()
+    {
+        isPlayingColorCoroutine = true;
+        float elapsed = 0.0f;
+        float nextChangeTime = colorAnimationDuration;
+        int index = 0;
+
+        while (isPlayingColorCoroutine)
+        {
+            elapsed += Time.deltaTime;
+
+            if (elapsed >= nextChangeTime)
+            {
+                nextChangeTime += colorAnimationDuration;
+
+                if (index >= colorCycle.Count) { index = 0; }
+
+                explanationText.color = colorCycle[index];
+                index++;
+            }
+
+            yield return null;
+        }
+
+        // Reset to white after the effect
+        titleText.color = Color.white;
+        subtitleText.color = Color.white;
+        explanationText.color = Color.white;
+        isPlayingColorCoroutine = false;
+    }
+
 }

@@ -11,11 +11,11 @@ public class SimpleState : IEnemyState
     public void FixedUpdateState(Enemy enemy)
     {
         // simply go forward
-        enemy.currentVelocity += enemy.direction * enemy.maxSpeed * Time.fixedDeltaTime;
+        enemy.currentVelocity = enemy.direction * enemy.maxSpeed;
     }
     public void UpdateState(Enemy enemy)
     {
-        
+        // doesn't rotate
     }
     public void ExitState(Enemy enemy)
     {

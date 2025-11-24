@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,7 +11,7 @@ public class Utils : MonoBehaviour
     public float rightLimit = 0f;
     public float topLimit = 0f;
     public float bottomLimit = 0f;
-
+    public List<Color> availableColors;
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -64,5 +66,30 @@ public class Utils : MonoBehaviour
         {
             child.gameObject.layer = LayerMask.NameToLayer(newLayer);
         }
+    }
+
+    public List<GameObject> GetChildGameObjectsWithTag(GameObject parent, string tag)
+    {
+        List<GameObject> taggedChildren = new List<GameObject>();
+        foreach (Transform child in parent.transform)
+        {
+            if (child.gameObject.CompareTag(tag))
+            {
+                taggedChildren.Add(child.gameObject);
+            }
+        }
+        return taggedChildren;
+    }
+
+    public Color GetRandomColorDifferentFrom(Color excludeColor)
+    {
+        List<Color> filteredColors = availableColors.FindAll(c => c != excludeColor);
+        if (filteredColors.Count == 0)
+        {
+            Debug.LogWarning("No available colors different from the excluded color.");
+            return excludeColor; // Return the excluded color if no other colors are available
+        }
+        int randomIndex = UnityEngine.Random.Range(0, filteredColors.Count);
+        return filteredColors[randomIndex];
     }
 }

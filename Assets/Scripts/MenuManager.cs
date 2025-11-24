@@ -12,6 +12,10 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private Button buttonBack;
     [SerializeField] private GameObject logo;
     [SerializeField] private GameObject controlsPanel;
+    [SerializeField] private GameObject optionsPanel;
+    [SerializeField] private Slider sliderMasterVolume;
+    [SerializeField] private Slider sliderMusicVolume;
+    [SerializeField] private Slider sliderFXVolume;
 
     void Awake()
     {
@@ -23,6 +27,8 @@ public class MenuManager : MonoBehaviour
 
     void Start()
     {
+        getVolumeSettingsFromPrefsAndApply();
+
         AudioManager.Instance.PlaySound("Music_Menu");
         if (buttonStart != null) buttonStart.onClick.AddListener(() =>
         {
@@ -46,6 +52,21 @@ public class MenuManager : MonoBehaviour
             btn.onClick.AddListener(() => AudioManager.Instance.PlaySound("UI_Click"));
         }
     }
+
+    private void getVolumeSettingsFromPrefsAndApply()
+    {
+        float masterVolume = PlayerPrefs.GetFloat("masterVolume", 1.0f);
+        float musicVolume = PlayerPrefs.GetFloat("musicVolume", 1.0f);
+        float fxVolume = PlayerPrefs.GetFloat("fxVolume", 1.0f);
+
+        AudioManager.Instance.SetMasterVolume(masterVolume);
+        AudioManager.Instance.SetMusicVolume(musicVolume);
+        AudioManager.Instance.SetFXVolume(fxVolume);
+
+        if (sliderMasterVolume != null) sliderMasterVolume.value = masterVolume;
+        if (sliderMusicVolume != null) sliderMusicVolume.value = musicVolume;
+        if (sliderFXVolume != null) sliderFXVolume.value = fxVolume;
+    }
     public void ShowControls()
     {
         Debug.Log("Show Controls clicked");
@@ -56,6 +77,7 @@ public class MenuManager : MonoBehaviour
         buttonExit.gameObject.SetActive(false);
         buttonBack.gameObject.SetActive(true);
         controlsPanel.SetActive(true);
+        optionsPanel.SetActive(true);
     }
     public void GoBack()
     {
@@ -67,6 +89,18 @@ public class MenuManager : MonoBehaviour
         buttonExit.gameObject.SetActive(true);
         buttonBack.gameObject.SetActive(false);
         controlsPanel.SetActive(false);
+        optionsPanel.SetActive(false);
     }
-
+    public void OnVolumeSliderChanged(float value)
+    {
+        AudioManager.Instance.SetMasterVolume(value);
+    }
+    public void OnMusicVolumeSliderChanged(float value)
+    {
+        AudioManager.Instance.SetMusicVolume(value);
+    }
+    public void OnFXVolumeSliderChanged(float value)
+    {
+        AudioManager.Instance.SetFXVolume(value);
+    }
 }

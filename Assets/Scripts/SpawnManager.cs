@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using System.Linq;
 public class SpawnManager : MonoBehaviour
 {
     public static SpawnManager Instance { get; private set; }
@@ -64,7 +65,15 @@ public class SpawnManager : MonoBehaviour
 
     public void SpawnEnemy(string enemyType = null)
     {
-        Vector3 spawnPosition = GetValidSpawnPosition();
+        Vector3 spawnPosition;
+        if (enemyType == "EnemyBoss")
+        {
+            spawnPosition = new Vector3(0, Utils.Instance.topLimit + 2.0f, 0);
+        }
+        else
+        {
+            spawnPosition = GetValidSpawnPosition();
+        }
 
         GameObject enemy = null;
         if (enemyType != null)
@@ -83,7 +92,6 @@ public class SpawnManager : MonoBehaviour
         }
         enemy.transform.position = spawnPosition;
         enemy.transform.rotation = (spawnPosition.x < 0) ? Quaternion.Euler(0, 0, 90) : Quaternion.Euler(0, 0, -90);
-        enemy.GetComponent<Enemy>().ResetState();
         Utils.Instance.ChangeLayerTo(enemy, "Interactable");
         enemy.SetActive(true);
         currentSpawned.Add(enemy);
@@ -93,38 +101,28 @@ public class SpawnManager : MonoBehaviour
     private GameObject WhichEnemyToSpawnAccordingToLevel()
     {
         List<EnemyType> availableEnemies = GameManager.Instance.currentLevelData.enemyData.availableEnemies;
-        Debug.Log("Available enemies for spawning:");
-        foreach (var tempEnemy in availableEnemies)
-        {
-            Debug.Log("- " + tempEnemy.name + " with spawn probability " + tempEnemy.spawnProbability);
-        }
         float randomPoint = Random.value;
-        string enemyName = "";
-        foreach (var tempEnemy in availableEnemies)
+
+        foreach (var e in availableEnemies)
         {
-            if (randomPoint < tempEnemy.spawnProbability)
-                enemyName = tempEnemy.name;
+            if (randomPoint < e.spawnProbability)
+            {
+                return GetEnemyFromPool(e.name);
+            }
             else
-                randomPoint -= tempEnemy.spawnProbability;
+            {
+                randomPoint -= e.spawnProbability;
+            }
         }
-        if (enemyName == "")
-        {
-            Debug.LogWarning("No enemy selected based on spawn probabilities, defaulting to first available enemy.");
-            enemyName = availableEnemies[0].name;
-        }
-        Debug.Log("Selected enemy to spawn: " + enemyName);
-        GameObject enemy = enemyPool.Find(e => !e.activeInHierarchy && e.GetComponent<Enemy>().enemyType == enemyName);
-        Debug.Log("Enemy found in pool: " + (enemy != null ? enemy.name : "null"));
-        if (enemy != null)
-        {
-            enemyPool.Remove(enemy);
-            return enemy;
-        }
-        else
-        {
-            Debug.LogWarning("No available base enemies in the pool!");
-            return null;
-        }
+
+        // fallback
+        return GetEnemyFromPool(availableEnemies[0].name);
+    }
+    private GameObject GetEnemyFromPool(string name)
+    {
+        GameObject enemy = enemyPool.Find(e => !e.activeInHierarchy && e.GetComponent<Enemy>().enemyType == name);
+        if (enemy != null) enemyPool.Remove(enemy);
+        return enemy;
     }
 
     private Vector3 GetValidSpawnPosition()
@@ -247,4 +245,33 @@ public class SpawnManager : MonoBehaviour
         }
         currentSpawned.Clear(); // Just to be sure
     }
+    public void RetrieveAllProjectiles()
+    {
+        Debug.Log("Retrieving all projectiles...");
+        for (int i = projectilePool.Count - 1; i >= 0; i--)
+        {
+            var projectile = projectilePool[i];
+            if (!projectile.activeInHierarchy) continue;
+            ReturnProjectileToPool(projectile);
+        }
+        projectilePool.Clear(); // Just to be sure
+    }
+
+public void ChangeEnemyStatesToSeek()
+{
+    Debug.Log("Changing all enemies to Seek State...");
+
+    List<GameObject> enemies = currentSpawned
+        .Concat(enemyPool)
+        .ToList();
+
+    foreach (GameObject enemyGO in enemies)
+    {
+        Enemy enemy = enemyGO.GetComponent<Enemy>();
+        Debug.Log("Changing enemy " + enemy.name + " to Seek State.");
+        Debug.Log("Current State: " + enemy.currentState.GetType().Name);
+        Debug.Log("Enemy Seek State instance: " + enemy.states["Seek"].GetType().Name);
+        enemy.ChangeState(enemy.states["Seek"]);
+    }
+}
 }

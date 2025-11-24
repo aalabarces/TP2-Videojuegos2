@@ -80,7 +80,7 @@ MonoBehaviour:
         SpeedBoost: 0
         DamageBoost: 0
   - act: 3
-    timer: 120
+    timer: 0
     enemyData:
       availableEnemies:
       - name: EnemyBoss
