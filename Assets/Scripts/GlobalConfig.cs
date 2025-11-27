@@ -8,4 +8,5 @@ public class GlobalConfig : ScriptableObject
     public float spawnDelay = 5.0f;
     public float minDistanceBetweenEnemies = 2.0f;
     public float spawnOffsetFromScreen = 1.0f;
+    public int maxProjectiles = 20;
 }

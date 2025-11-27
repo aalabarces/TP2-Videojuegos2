@@ -99,7 +99,7 @@ public class Enemy : MonoBehaviour
         ResetState();
     }
 
-    public void ResetState()
+    public virtual void ResetState()
     {
         health = baseHealth;
         rb.velocity = Vector2.zero;

@@ -10,13 +10,13 @@ public class AudioManager : MonoBehaviour
     public float masterVolume = 1.0f;
     public float musicVolume = 1.0f;
     public float fxVolume = 1.0f;
-    [SerializeField] private AudioSource musicMenu;
-    [SerializeField] private AudioSource musicGame;
-    [SerializeField] private AudioSource UI_Click;
+    [SerializeField] public AudioConfig audioConfig;
     private Dictionary<string, AudioSource> soundDictionary = new Dictionary<string, AudioSource>();
     public Dictionary<string, IAudioState> audioStates = new Dictionary<string, IAudioState>();
     public IAudioState currentState;
     public bool ready { get; private set; } = false;
+    [SerializeField] private AudioMixerGroup musicGroup;
+    [SerializeField] private AudioMixerGroup sfxGroup;
     void Awake()
     {
         if (Instance == null) Instance = this;
@@ -31,9 +31,16 @@ public class AudioManager : MonoBehaviour
         audioStates.Add("Pause", new PauseAudioState());
         currentState = audioStates["Menu"];
 
-        soundDictionary.Add("Music_Menu", musicMenu);
-        soundDictionary.Add("Music_Game", musicGame);
-        soundDictionary.Add("UI_Click", UI_Click);
+        audioConfig.audioDataList.ForEach(audioData =>
+        {
+            GameObject audioObject = new GameObject("Audio_" + audioData.audioKey);
+            audioObject.transform.parent = this.transform;
+            AudioSource audioSource = audioObject.AddComponent<AudioSource>();
+            audioSource.clip = audioData.audioClips;
+            AudioMixerGroup group = audioData.audioKey.Contains("Music") ? musicGroup : sfxGroup;
+            audioSource.outputAudioMixerGroup = group;
+            soundDictionary.Add(audioData.audioKey, audioSource);
+        });
         ready = true;
     }
 
@@ -62,11 +69,11 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void StopAllSounds()
+    public void PauseAllSounds()
     {
         foreach (var sound in soundDictionary.Values)
         {
-            sound.Stop();
+            sound.Pause();
         }
     }
 

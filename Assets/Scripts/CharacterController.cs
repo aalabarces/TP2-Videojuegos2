@@ -168,15 +168,12 @@ public class Player : MonoBehaviour
             projectile.transform.rotation = cannon.transform.rotation;
             projectile.GetComponent<Projectile>().SetDirection(direction);
             projectile.GetComponent<Projectile>().SetColor(spriteRenderer.color);
-            // Debug.Log($"Projectile fired towards {direction}");
+            Debug.Log($"Projectile fired towards {direction}");
             SetFiringState(true);
-            // Invoke(nameof(allowFiringAgain), fireRate);
             cannon.GetComponent<Animator>().SetBool("isFiring", true);
             cannon.GetComponent<AimingScript>().PlayCannonSound();
 
             Invoke(nameof(ResetFiringState), fireRate);
-            // se suponía que esto (resetear el estado de disparo) iba en el fin de la animación
-            // se llamaba desde el proyectil onCollisionEnter, pero se bugueaba si disparabas mucho rápido
         }
         else
         {

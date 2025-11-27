@@ -1,27 +1,31 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class Projectile : MonoBehaviour
 {
     private Rigidbody2D rb;
     private Animator animator;
     private AudioSource audioSource;
+    private SpriteRenderer spriteRenderer;
     [SerializeField] private float speed = 10f;
     [SerializeField] private float strength = 1f;
     private Vector2 direction = Vector2.up;
     [SerializeField] private Color color = Color.white;
 
-    void Start()
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
-        MoveAccordingToSpeedAndDirection();
-        // Debug.Log($"Projectile fired in direction {direction} with speed {speed} and strength {strength}");
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
+
     void FixedUpdate()
     {
         if (!GameManager.Instance.isGameActive) return;
@@ -36,12 +40,23 @@ public class Projectile : MonoBehaviour
     public void SetColor(Color col)
     {
         color = col;
+        spriteRenderer.color = col;
     }
 
-    public void OnEnable()
+    public void ResetState()
     {
+        spriteRenderer.color = Color.white;
+        ResetAnimator();
+    }
+
+    public void ResetAnimator()
+    {
+        if (animator == null) return;
+        animator.enabled = true;
+        animator.Rebind();
         animator.SetBool("die", false);
         animator.Play("Move", 0, 0f);
+        animator.Update(0f);
     }
 
     private void MoveAccordingToSpeedAndDirection()
@@ -80,6 +95,7 @@ public class Projectile : MonoBehaviour
 
     public void TellSpawnManagerToKillMe()
     {
+        ResetAnimator();
         SpawnManager.Instance.ReturnProjectileToPool(gameObject);
     }
 }

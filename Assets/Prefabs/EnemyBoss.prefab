@@ -306,6 +306,10 @@ MonoBehaviour:
   fireRate: 4
   fleeDistance: 5
   shootCooldown: 2
+  directionChangeCooldown: 1.5
+  boundaryAvoidanceMargin: 2
+  fleeBias: 1.5
+  wanderBias: 1
 --- !u!1001 &3513952307207583124
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -324,7 +328,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6780955563809914881, guid: 01f6b84bf10eb024bb817acdbedb6e28, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.234
+      value: 0.0132
       objectReference: {fileID: 0}
     - target: {fileID: 6780955563809914881, guid: 01f6b84bf10eb024bb817acdbedb6e28, type: 3}
       propertyPath: m_LocalPosition.z

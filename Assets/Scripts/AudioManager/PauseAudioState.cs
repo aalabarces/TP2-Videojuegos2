@@ -3,12 +3,13 @@ using UnityEngine;
 public class PauseAudioState : IAudioState
 {
     public void EnterState(AudioManager manager)
-    {
-        manager.PlaySound("UI_Pause");
+    {   
+        manager.PauseAllSounds();
+        manager.PlaySound("UI_Click");
     }
 
     public void ExitState(AudioManager manager)
     {
-        manager.PlaySound("UI_Pause");
+        manager.PlaySound("UI_Click");
     }
 }

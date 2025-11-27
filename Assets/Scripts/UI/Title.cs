@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Title : MonoBehaviour
 {
-    [SerializeField] private GameObject titlePanel;
+    [SerializeField] public GameObject titlePanel;
     private TMPro.TextMeshProUGUI titleText;
     private TMPro.TextMeshProUGUI subtitleText;
     private TMPro.TextMeshProUGUI explanationText;
@@ -60,7 +60,7 @@ public class Title : MonoBehaviour
     public IEnumerator ShowTitle()
     {
         skipTitle = false;
-        StartCoroutine(StopTitleIfKeyPressed());
+        // StartCoroutine(StopTitleIfKeyPressed());
         Debug.Log("Showing title screen...");
         backgroundPanel.SetActive(true);
         titleText.alpha = 1.0f;
@@ -78,14 +78,17 @@ public class Title : MonoBehaviour
         if (skipTitle) yield break;
         yield return new WaitUntil(() => Input.anyKey);
         yield return PlayFadeOutAll();
+        skipTitle = true;
     }
 
-    private IEnumerator StopTitleIfKeyPressed()
+    public IEnumerator StopTitleIfKeyPressed()
     {
+                // Skip temporarily disabled
         while (!skipTitle)
         {
             if (Input.anyKeyDown)
             {
+
                 Debug.Log("Key pressed, stopping title screen...");
                 skipTitle = true;
                 isPlayingColorCoroutine = false;
@@ -94,6 +97,7 @@ public class Title : MonoBehaviour
             }
             yield return null;
         }
+        skipTitle = false;
     }
 
     private IEnumerator PlayFadeInAnimation(TMPro.TextMeshProUGUI textElement)

@@ -33,6 +33,8 @@ public class DialogueManager : MonoBehaviour
     {
         dialogueText.text = "";
         StopTyping = false;
+        Debug.Log("Typing dialogue: " + dialogue);
+        Debug.Log(dialogue.ToCharArray().Length + " characters to type.");
         foreach (char letter in dialogue.ToCharArray())
         {
             dialogueText.text += letter;

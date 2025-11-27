@@ -11,14 +11,19 @@ public class Boss : Enemy
     [SerializeField] public float shootCooldown = 2f;
     private float shootTimer;
     private float directionChangeTimer;
-    private float directionChangeCooldown = 1.5f;
+    [SerializeField] private float directionChangeCooldown = 1.5f;
     private float colorChangeTimer;
     private float colorChangeCooldown = 10f;
+    [SerializeField] private float boundaryAvoidanceMargin = 2.0f;
+    [SerializeField] private float fleeBias = 1.5f;
+    [SerializeField] private float wanderBias = 1.0f;
     
     protected void Start()
     {
         ChangeState(states["Simple"]);
         shootTimer = shootCooldown;
+        directionChangeTimer = 0f;
+        colorChangeTimer = colorChangeCooldown;
     }
 
     protected override void FixedUpdate()
@@ -39,17 +44,20 @@ public class Boss : Enemy
 
     private void HandleBossBehaviour()
     {
-        // if playerIsClose, flee; else, move and shoot periodically
+        // Lógica de cambio de estado
         if (PlayerIsClose())
         {
-            ChangeState(states["Flee"]);
-            return;
+            if (currentState != states["Flee"])
+            {
+                ChangeState(states["Flee"]);
+            }
         }
         else if (currentState != states["Simple"])
         {
             ChangeState(states["Simple"]);
         }
 
+        // Lógica de disparo
         shootTimer -= Time.deltaTime;
         if (shootTimer <= 0f)
         {
@@ -61,7 +69,15 @@ public class Boss : Enemy
         directionChangeTimer -= Time.deltaTime;
         if (directionChangeTimer <= 0f)
         {
-            direction = RandomDirection();
+            if (currentState == states["Flee"])
+            {
+                direction = GetFleeDirection();
+            }
+            else // currentState == states["Simple"]
+            {
+                direction = GetWanderDirection();
+            }
+            
             directionChangeTimer = directionChangeCooldown;
         }
         
@@ -74,11 +90,86 @@ public class Boss : Enemy
         }
     }
 
-    public Vector3 RandomDirection()
+    public Vector3 GetWanderDirection()
     {
-        return new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+        Vector2 currentPosition = transform.position;
+        float left = Utils.Instance.leftLimit;
+        float right = Utils.Instance.rightLimit;
+        float bottom = Utils.Instance.bottomLimit;
+        float top = Utils.Instance.topLimit;
+
+        Vector3 randomDir = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+        
+        Vector3 edgeAvoidance = Vector3.zero;
+
+        if (currentPosition.x < left + boundaryAvoidanceMargin)
+        {
+            edgeAvoidance += Vector3.right;
+        }
+        else if (currentPosition.x > right - boundaryAvoidanceMargin)
+        {
+            edgeAvoidance += Vector3.left;
+        }
+
+        if (currentPosition.y < bottom + boundaryAvoidanceMargin)
+        {
+            edgeAvoidance += Vector3.up;
+        }
+        else if (currentPosition.y > top - boundaryAvoidanceMargin)
+        {
+            edgeAvoidance += Vector3.down;
+        }
+
+        Vector3 finalDirection = (randomDir * wanderBias + edgeAvoidance).normalized;
+
+        return finalDirection;
     }
 
+    public Vector3 GetFleeDirection()
+    {
+        Vector3 playerPos = GameManager.Instance.player.transform.position;
+        Vector3 bossPos = transform.position;
+
+        // 1. Dirección base: vector alejándose del jugador.
+        Vector3 fleeFromPlayer = (bossPos - playerPos).normalized;
+
+        // 2. Comprobación y ajuste de bordes para evitar ser acorralado.
+        Vector3 edgeAvoidance = Vector3.zero;
+
+        float left = Utils.Instance.leftLimit;
+        float right = Utils.Instance.rightLimit;
+        float bottom = Utils.Instance.bottomLimit;
+        float top = Utils.Instance.topLimit;
+
+        // Lógica de detección de proximidad al borde
+        bool nearLeft = bossPos.x < left + boundaryAvoidanceMargin;
+        bool nearRight = bossPos.x > right - boundaryAvoidanceMargin;
+        bool nearBottom = bossPos.y < bottom + boundaryAvoidanceMargin;
+        bool nearTop = bossPos.y > top - boundaryAvoidanceMargin;
+
+        // Si cerca de un borde Y la huida del jugador nos lleva *hacia* ese borde (fleeFromPlayer.x/y tiene el mismo signo), 
+        // necesitamos añadir una corrección fuerte.
+        if (nearLeft && fleeFromPlayer.x < 0) edgeAvoidance += Vector3.right;
+        if (nearRight && fleeFromPlayer.x > 0) edgeAvoidance += Vector3.left;
+        if (nearBottom && fleeFromPlayer.y < 0) edgeAvoidance += Vector3.up;
+        if (nearTop && fleeFromPlayer.y > 0) edgeAvoidance += Vector3.down;
+
+        // 3. Combinar huida del jugador (prioridad) con evasión de bordes.
+        Vector3 finalDirection;
+
+        if (edgeAvoidance != Vector3.zero)
+        {
+            // Si hay peligro de esquina, priorizamos el alejamiento del borde (multiplicando por fleeBias).
+            finalDirection = (fleeFromPlayer * 1.0f + edgeAvoidance * fleeBias).normalized;
+        }
+        else
+        {
+            // Si no hay peligro de esquina, solo huir del jugador.
+            finalDirection = fleeFromPlayer;
+        }
+
+        return finalDirection;
+    }
     public bool PlayerIsClose()
     {
         float d = Vector3.Distance(transform.position, GameManager.Instance.player.transform.position);
@@ -123,6 +214,15 @@ public class Boss : Enemy
         }
     }
 
+    public override void ResetState()
+    {
+        base.ResetState();
+        shootTimer = shootCooldown;
+        directionChangeTimer = 0f;
+        colorChangeTimer = colorChangeCooldown;
+        ResetFiringState();
+    }
+
     public void SetFiringState(bool state)
     {
         isFiring = state;
@@ -149,6 +249,7 @@ public class Boss : Enemy
         Color newColor = Utils.Instance.GetRandomColorDifferentFrom(GetComponent<SpriteRenderer>().color);
         GetComponent<SpriteRenderer>().color = newColor;
         color = newColor;
+        cannon.GetComponent<SpriteRenderer>().color = newColor;
     }
 
     public void CheatKill()

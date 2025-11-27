@@ -20,11 +20,10 @@ public class GameManager : MonoBehaviour
     public int currentWave { get; private set; } = 1;
     public bool timerIsActive { get; private set; } = false;
     public float gameTimer { get; private set; } = 300f;
+    [SerializeField] private float fakeTimer;
     public int score { get; private set; } = 0;
-    public bool continueFromSavedLevel { get; private set; } = false;
     public Dictionary<string, IGameState> gameStates = new Dictionary<string, IGameState>();
     public IGameState currentState;
-    public AudioSource backgroundMusicSource;
 
     void Awake()
     {
@@ -83,7 +82,6 @@ public class GameManager : MonoBehaviour
 
     private bool AreReferencesEmpty()
     {
-        // Debug.Log("uiManager: " + uiManager + ", player: " + player);
         return uiManager == null || player == null;
     }
 
@@ -95,7 +93,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("Getting references...");
             yield return GetReferences();
         }
-        ResetState();
+        yield return ResetState();
         // Start SpawnManager loop if not started
         if (SpawnManager.Instance.loopHasStarted == false)
         {
@@ -112,9 +110,6 @@ public class GameManager : MonoBehaviour
         currentLevel = act;
         PlayerPrefs.SetFloat("currentLevel", currentLevel);
         PlayerPrefs.Save();
-        Debug.Log("Current level set to: " + currentLevel);
-        Debug.Log("Guardado: " + PlayerPrefs.GetFloat("currentLevel"));
-        Debug.Log("Starting Act " + act + " with level data: " + currentLevelData);
         
         if (act < 2f) UIManager.Instance.HideColorTriggers();
         else UIManager.Instance.ShowColorTriggers();
@@ -130,7 +125,7 @@ public class GameManager : MonoBehaviour
         switch (act)
         {
             case 1f:
-            ChangeState(gameStates["Dialogue"]);
+                ChangeState(gameStates["Dialogue"]);
                 yield return DialogueManager.Instance.PlayDialogueSequence("Act1_Intro");
                 yield return new WaitUntil(() => Input.anyKey);
                 break;
@@ -138,7 +133,6 @@ public class GameManager : MonoBehaviour
                 UIManager.Instance.HideFakeBack();
                 break;
             case 2f:
-                Debug.Log("Starting Act 2 intro dialogue...");
                 UIManager.Instance.HideFakeBack();
                 SpawnManager.Instance.ChangeEnemyStatesToSeek();
                 break;
@@ -164,6 +158,7 @@ public class GameManager : MonoBehaviour
             timerIsActive = true;
             Debug.Log("Setting game timer to: " + currentLevelData.timer);
             gameTimer = currentLevelData.timer;
+            fakeTimer = 60f;
         }
         else
         {
@@ -190,9 +185,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Game Stopped!");
         if (isGameActive) ToggleIsGameActive();
-        Debug.Log("Is game active? " + isGameActive);
         isSpawningAllowed = false;
-        // SpawnManager.Instance.StopAllSpawning();
     }
 
     private IEnumerator WaitForCountdown()
@@ -201,21 +194,13 @@ public class GameManager : MonoBehaviour
         countdown = 3;
         while (countdown > 0)
         {
-            Debug.Log("Countdown: " + countdown);
             uiManager.UpdateCountdown(countdown.ToString());
             countdown--;
+            AudioManager.Instance.PlaySound("UI_Countdown_0");
             yield return new WaitForSeconds(1);
         }
+        AudioManager.Instance.PlaySound("UI_Countdown_1");
         uiManager.UpdateCountdown("Go!");
-    }
-
-    public void ShowVictoryScreen()
-    {
-        isSpawningAllowed = false;  // esto no va acá
-        // gameActive remains false so you can dance around like a happy winner
-        Debug.Log("Victory! You've completed all waves!");
-        uiManager.alertsText.gameObject.SetActive(true);
-        uiManager.UpdateAlerts("Victory! You've completed all waves!");
     }
 
     public IEnumerator GameOver()
@@ -234,8 +219,6 @@ public class GameManager : MonoBehaviour
 
     public void IncreaseScore(float points)
     {
-        Debug.Log("Increasing score by: " + points);
-
         score += (int)points; //FLOAT TO INT
         uiManager.UpdateScore(score);
     }
@@ -244,7 +227,19 @@ public class GameManager : MonoBehaviour
     {
         if (!timerIsActive) return;
         gameTimer -= Time.deltaTime;
-        uiManager.UpdateTimer(gameTimer);
+
+        if (currentLevel == 1f)
+        {
+            // Fake timer logic for Act 1
+            float randomSpeed = Random.Range(0.01f, 1f);
+            fakeTimer -= Time.deltaTime * randomSpeed;
+            uiManager.UpdateTimer(fakeTimer);
+
+        }
+        else
+        {
+            uiManager.UpdateTimer(gameTimer);
+        }
         // si el timer llega a 0 y el juego esta activo, termina la wave
         if (gameTimer <= 0 && isGameActive)
         {
@@ -256,11 +251,9 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator TimeIsUp()
     {
-        Debug.Log("Handling Time Is Up!");
         gameTimer = 0;
         uiManager.UpdateTimer(gameTimer);
         ChangeState(gameStates["Inactive"]);
-        SpawnManager.Instance.RetrieveAllEnemies();
         switch (currentLevel)
         {
             case 1f:
@@ -285,18 +278,9 @@ public class GameManager : MonoBehaviour
     {
         isGameActive = !isGameActive;
     }
-
-    public void SetContinueFromSavedLevel(bool value)
-    {
-        continueFromSavedLevel = value;
-    }
-
     public void RestartGame()
     {
         Debug.Log("Restarting Game...");
-        SetContinueFromSavedLevel(true);
-        // UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-        // GlobalSceneManager.Instance.ContinueFromPrefs();
         StartCoroutine(StartAct(PlayerPrefs.GetFloat("currentLevel", 1)));
     }
 
@@ -317,10 +301,12 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("Menu");
     }
 
-    public void ResetState()
+    public IEnumerator ResetState()
     {
         player.ResetPlayer();
         SpawnManager.Instance.RetrieveAllEnemies();
         SpawnManager.Instance.RetrieveAllProjectiles();
+        uiManager.HideEverything();
+        yield return null;
     }
 }

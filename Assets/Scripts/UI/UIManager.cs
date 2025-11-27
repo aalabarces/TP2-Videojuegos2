@@ -49,15 +49,7 @@ public class UIManager : MonoBehaviour
         HideEverything();
     }
 
-    void Update()
-    {
-        if (GameManager.Instance.timerIsActive)
-        {
-            UpdateTimer(GameManager.Instance.gameTimer);
-        }
-    }
-
-    private void HideEverything()
+    public void HideEverything()
     {
         foreach (var textElement in textElements)
         {
@@ -146,6 +138,7 @@ public class UIManager : MonoBehaviour
         Debug.Log("Restart button clicked!");
         GameManager.Instance.RestartGame();
         HideEverything();
+        countdownText.gameObject.SetActive(true);
     }
 
     public void ShowDialogueMenu()
@@ -181,6 +174,7 @@ public class UIManager : MonoBehaviour
 
     public void BackToMainMenu()
     {
+        GameManager.Instance.ChangeState(GameManager.Instance.gameStates["Inactive"]);
         GlobalSceneManager.Instance.GoToMainMenu();
     }
     public void ResumeGameplay()

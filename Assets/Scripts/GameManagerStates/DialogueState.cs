@@ -13,11 +13,7 @@ public class DialogueState : IGameState
 
     public void UpdateState(GameManager manager)
     {
-        // Debug.Log("Updating Menu State");
-        if (Input.anyKeyDown)
-        {
-            DialogueManager.Instance.SkipDialogue();
-        }
+        // Debug.Log("Updating Dialogue State");
     }
 
     public void ExitState(GameManager manager)

@@ -12,6 +12,7 @@ public class SpawnManager : MonoBehaviour
     public List<GameObject> currentSpawned { get; private set; } = new List<GameObject>();
     private List<GameObject> enemyPool = new List<GameObject>();
     private List<GameObject> projectilePool = new List<GameObject>();
+    private List<GameObject> activeProjectiles = new List<GameObject>();
     [SerializeField] private GameObject projectilePrefab;
     public bool loopHasStarted { get; private set; } = false;
     private float spawnDelay;
@@ -84,7 +85,7 @@ public class SpawnManager : MonoBehaviour
         {
             enemy = WhichEnemyToSpawnAccordingToLevel();
         }
-
+        Debug.Log("Spawning enemy of type: " + (enemy != null ? enemy.name : "null"));
         if (!enemy)
         {
             Debug.LogWarning("No available enemies of type " + enemyType + " in the pool");
@@ -94,6 +95,7 @@ public class SpawnManager : MonoBehaviour
         enemy.transform.rotation = (spawnPosition.x < 0) ? Quaternion.Euler(0, 0, 90) : Quaternion.Euler(0, 0, -90);
         Utils.Instance.ChangeLayerTo(enemy, "Interactable");
         enemy.SetActive(true);
+        enemy.GetComponent<Enemy>().ResetState();
         currentSpawned.Add(enemy);
         Debug.Log("Enemy spawned at position: " + spawnPosition);
     }
@@ -127,8 +129,8 @@ public class SpawnManager : MonoBehaviour
 
     private Vector3 GetValidSpawnPosition()
     {
-        float topBound = Utils.Instance.topLimit;
-        float bottomBound = Utils.Instance.bottomLimit;
+        float topBound = Utils.Instance.topLimit + 2.0f;
+        float bottomBound = Utils.Instance.bottomLimit - 2.0f;
         float leftBound = Utils.Instance.leftLimit - spawnOffsetFromScreen;
         float rightBound = Utils.Instance.rightLimit + spawnOffsetFromScreen;
 
@@ -202,7 +204,7 @@ public class SpawnManager : MonoBehaviour
 
     private void PopulateProjectilePool()
     {
-        for (int i = 0; i < ConfigValues.Instance.maxProjectiles; i++)
+        for (int i = 0; i < globalConfig.maxProjectiles; i++)
         {
             GameObject projectile = Instantiate(projectilePrefab);
             projectile.SetActive(false);
@@ -218,6 +220,8 @@ public class SpawnManager : MonoBehaviour
             projectile.SetActive(true);
             Utils.Instance.ChangeLayerTo(projectile, "Interactable");
             projectilePool.Remove(projectile);
+            activeProjectiles.Add(projectile);
+            projectile.GetComponent<Projectile>().ResetState();
             return projectile;
         }
         else
@@ -232,6 +236,7 @@ public class SpawnManager : MonoBehaviour
         projectile.SetActive(false);
         if (!projectilePool.Contains(projectile))
         {
+            activeProjectiles.Remove(projectile);
             projectilePool.Add(projectile);
         }
     }
@@ -248,13 +253,11 @@ public class SpawnManager : MonoBehaviour
     public void RetrieveAllProjectiles()
     {
         Debug.Log("Retrieving all projectiles...");
-        for (int i = projectilePool.Count - 1; i >= 0; i--)
+        for (int i = activeProjectiles.Count - 1; i >= 0; i--)
         {
-            var projectile = projectilePool[i];
-            if (!projectile.activeInHierarchy) continue;
+            var projectile = activeProjectiles[i];
             ReturnProjectileToPool(projectile);
         }
-        projectilePool.Clear(); // Just to be sure
     }
 
 public void ChangeEnemyStatesToSeek()

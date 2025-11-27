@@ -33,15 +33,14 @@ public class MenuManager : MonoBehaviour
         if (buttonStart != null) buttonStart.onClick.AddListener(() =>
         {
             Debug.Log("Start Game clicked");
-            GlobalSceneManager.Instance.ChangeScene();
+            GlobalSceneManager.Instance.StartNewGame();
         });
         if (buttonConfig != null) buttonConfig.onClick.AddListener(ShowControls);
         if (buttonBack != null) buttonBack.onClick.AddListener(GoBack);
         if (buttonContinue != null) buttonContinue.onClick.AddListener(() =>
         {
-            Debug.Log("Saved Level: " + PlayerPrefs.GetFloat("currentLevel"));
-            GameManager.Instance.SetContinueFromSavedLevel(true);
             Debug.Log("Continue Game clicked");
+            Debug.Log("Saved Level: " + PlayerPrefs.GetFloat("currentLevel"));
             GlobalSceneManager.Instance.ContinueFromPrefs();
         });
         if (buttonExit != null) buttonExit.onClick.AddListener(GlobalSceneManager.Instance.exitGame);

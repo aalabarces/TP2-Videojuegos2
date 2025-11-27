@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1802fd32c1f51714eb5854d63abcdb45, type: 3}
+  m_Name: AudioConfig
+  m_EditorClassIdentifier: 
+  audioDataList:
+  - audioKey: UI_Click
+    audioClips: {fileID: 8300000, guid: 78a820c34e8fe8943a310ed3a2a9237e, type: 3}
+  - audioKey: Music_Menu
+    audioClips: {fileID: 8300000, guid: fd7775b17c93c6f489d77d9786d1d68f, type: 3}
+  - audioKey: Music_Game
+    audioClips: {fileID: 8300000, guid: 27a562d44cd54e14b80ae5d0a7a99553, type: 3}
+  - audioKey: Music_Super
+    audioClips: {fileID: 8300000, guid: 770165af89478d34eb657900b36220da, type: 3}
+  - audioKey: UI_Countdown_0
+    audioClips: {fileID: 8300000, guid: 902904e275ba542439655669fc10530a, type: 3}
+  - audioKey: UI_Countdown_1
+    audioClips: {fileID: 8300000, guid: 71965b0d8fb795140b3e12e2af5c31b0, type: 3}

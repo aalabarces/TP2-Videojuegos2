@@ -15,7 +15,6 @@ public class GlobalSceneManager : MonoBehaviour
         DontDestroyOnLoad(_dontDestroyGO);
 
         count = 0;
-        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void Start()
@@ -39,18 +38,10 @@ public class GlobalSceneManager : MonoBehaviour
         }
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if (scene.name == "Game" && !GameManager.Instance.continueFromSavedLevel)
-        {
-            StartCoroutine(GameManager.Instance.StartAct(1));
-        }
-    }
-
     public void ContinueFromPrefs()
     {
         Debug.Log("Continuing from saved level...");
-        ChangeScene();
+        GoToGame();
         StartCoroutine(GameManager.Instance.StartAct(PlayerPrefs.GetFloat("currentLevel", 1)));
     }
 
@@ -61,12 +52,22 @@ public class GlobalSceneManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(count);
     }
 
+    public void GoToGame()
+    {
+        Debug.Log("Going to Game...");
+        AudioManager.Instance.ChangeState(AudioManager.Instance.audioStates["Inactive"]);
+        count = 2; // game scene index
+        UnityEngine.SceneManagement.SceneManager.LoadScene(count);
+    }
+
+    public void StartNewGame()
+    {
+        Debug.Log("Starting New Game...");
+        GoToGame();
+        StartCoroutine(GameManager.Instance.StartAct(1));
+    }
     public void exitGame()
     {
         Application.Quit();
-    }
-    void OnDestroy()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }

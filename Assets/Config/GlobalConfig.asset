@@ -29,8 +29,9 @@ MonoBehaviour:
     maxPoolSize: 20
     objectType: EnemyBlue
   - prefab: {fileID: 9117074348808057536, guid: c8e993c648931df4bb318b0730c4d001, type: 3}
-    maxPoolSize: 20
+    maxPoolSize: 1
     objectType: EnemyBoss
   spawnDelay: 3
   minDistanceBetweenEnemies: 2
   spawnOffsetFromScreen: 1
+  maxProjectiles: 20

@@ -7,6 +7,7 @@ public class ActiveState : IGameState
         Debug.Log("Entering Active State");
         manager.StartGame();
         AudioManager.Instance.ChangeState(AudioManager.Instance.audioStates["Active"]);
+        CursorManager.Instance.SetCrosshairCursor();
     }
 
     public void UpdateState(GameManager manager)
@@ -17,6 +18,7 @@ public class ActiveState : IGameState
         {
             handleClick(manager);
         }
+        // Cheat keys
         if (Input.GetKeyDown(KeyCode.P) && Input.GetKey(KeyCode.LeftShift))
         {
             manager.SetTimerTo(1f);
@@ -39,10 +41,7 @@ public class ActiveState : IGameState
     {
         Debug.Log("Exiting Active State");
         manager.StopGame();
-        if (manager.backgroundMusicSource != null) 
-        {
-            manager.backgroundMusicSource.Pause();
-        }
+        CursorManager.Instance.SetDefaultCursor();
     }
 
     private void handleClick(GameManager manager)

@@ -21,7 +21,9 @@ public class InactiveState : IGameState
     }
     public void HandleEscapeKey(GameManager manager)
     {
-        // Do nothing or show a message that the game is inactive
-        Debug.Log("Game is inactive. Escape key has no effect.");
+        if (manager.uiManager.title.titlePanel.activeInHierarchy)
+        {
+            manager.StartCoroutine(manager.uiManager.title.StopTitleIfKeyPressed());
+        }
     }
 }
