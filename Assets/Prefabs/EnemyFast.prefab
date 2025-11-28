@@ -295,7 +295,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0}
   growthMultiplier: 1.5
   scoreValue: 20
-  maxSpeed: 2
+  maxSpeed: 3
   currentVelocity: {x: 0, y: 0}
   baseHealth: 1
   health: 1

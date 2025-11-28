@@ -10,7 +10,7 @@ public class CursorManager : MonoBehaviour
     [SerializeField] private float animationSpeed = 0.05f;
     [SerializeField] private Texture2D crosshairCursor;
     [SerializeField] private Vector2 hotspotDefault;
-    [SerializeField] private Vector2 hotspotCrosshair;
+    private Vector2 hotspotCrosshair;
 
     void Awake()
     {
@@ -19,19 +19,29 @@ public class CursorManager : MonoBehaviour
     }
     void Start()
     {
-        SetDefaultCursor();
+        hotspotCrosshair = new Vector2(
+            crosshairCursor.width / 2f,
+            crosshairCursor.height / 2f
+        );
+        // SetDefaultCursor();
+        SetCrosshairCursor();
     }
-
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0) && !GameManager.Instance.isGameActive)
-            {
-                StartCoroutine(ActivateMouseClickAnimation());
-            }
-    }
+    // Había hecho un cursor animado muy lindo
+    // Tenía una animación de disparo y sonido
+    // Pero la verdad es que nunca sabías muy bien dónde hacías click
+    // Así que la tuve que sacar :(
+    // Pero dejo el código, para que vean qué lindo es
+    // void Update()
+    // {
+    //     if (Input.GetMouseButtonDown(0) && !GameManager.Instance.isGameActive)
+    //         {
+    //             StartCoroutine(ActivateMouseClickAnimation());
+    //         }
+    // }
 
     public IEnumerator ActivateMouseClickAnimation()
     {
+        AudioManager.Instance.PlaySound("FX_Fire");
         for (int i = 0; i < interactCursor.Count; i++)
         {
             Cursor.SetCursor(interactCursor[i], hotspotDefault, CursorMode.Auto);

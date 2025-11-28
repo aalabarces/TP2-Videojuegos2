@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - FakeBack
   - Cannon
+  - Potion
   layers:
   - Default
   - TransparentFX

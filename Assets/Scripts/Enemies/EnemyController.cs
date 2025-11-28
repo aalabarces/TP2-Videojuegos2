@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
@@ -73,10 +75,10 @@ public class Enemy : MonoBehaviour
         rb.MovePosition(newPosition);
     }
 
-    public void GetHit(float damage, Color col)
+    public virtual void GetHit(float damage, Color col)
     {
         Debug.Log($"Enemy of type {enemyType} got hit with damage {damage} and color {col}. Current health: {health}. Current color: {color}");
-        if (color != col) return;   // ALPHA ERROR
+        if (color != col) return;
         health -= damage;
         if (health <= 0)
         {
@@ -92,6 +94,10 @@ public class Enemy : MonoBehaviour
         Utils.Instance.ChangeLayerTo(this.gameObject, "Non-interactable");
         GameManager.Instance.PlayerKilledEnemy(gameObject);
         // Invoke(nameof(TellSpawnManagerToKillMe), 0.5f);
+        if (Random.value < GameManager.Instance.globalConfig.potionDropChance)
+        {
+            SpawnManager.Instance.SpawnPotionAtPosition(transform.position);
+        }
     }
 
     private void OnEnable()

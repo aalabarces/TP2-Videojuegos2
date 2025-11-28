@@ -15,7 +15,8 @@ public class Player : MonoBehaviour
     public GameObject cannon;
     private SpriteRenderer cannonSpriteRenderer;
     [SerializeField]
-    public int currentLives { get; private set; } = 3;
+    public int maxLives = 6;
+    public int currentLives { get; private set; }
     [SerializeField]
     private float speed = 10.0f;
     [SerializeField]
@@ -38,6 +39,8 @@ public class Player : MonoBehaviour
     }
     void Start()
     {
+        currentLives = maxLives;
+        UIManager.Instance.InitializeHearts(maxLives);
         UIManager.Instance.UpdateLives(currentLives);
     }
     void FixedUpdate()
@@ -140,7 +143,7 @@ public class Player : MonoBehaviour
         if (currentLives <= 0)
         {
             Debug.Log("Game Over!");
-            animator.SetTrigger("Die");
+            // animator.SetTrigger("Die");
             engineSound.Stop();
             StartCoroutine(GameManager.Instance.GameOver());
         }
@@ -189,11 +192,22 @@ public class Player : MonoBehaviour
 
     public void ResetPlayer()
     {
-        currentLives = 3;
+        currentLives = maxLives;
         UIManager.Instance.UpdateLives(currentLives);
         transform.position = Vector3.zero;
         transform.rotation = Quaternion.identity;
         spriteRenderer.color = Color.white;
         cannonSpriteRenderer.color = Color.white;
+    }
+
+    public void Heal(int amount)
+    {
+        currentLives += amount;
+        if (currentLives > maxLives)
+        {
+            currentLives = maxLives;
+        }
+        UIManager.Instance.UpdateLives(currentLives);
+        Debug.Log("Healed! Current lives: " + currentLives);
     }
 }

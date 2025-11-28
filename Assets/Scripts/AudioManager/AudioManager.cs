@@ -39,6 +39,12 @@ public class AudioManager : MonoBehaviour
             audioSource.clip = audioData.audioClips;
             AudioMixerGroup group = audioData.audioKey.Contains("Music") ? musicGroup : sfxGroup;
             audioSource.outputAudioMixerGroup = group;
+            audioSource.playOnAwake = false;
+            audioSource.loop = audioData.audioKey.Contains("Music") && !audioData.audioKey.Contains("Victory") ? true : false;
+            if (audioData.audioKey.Contains("Countdown"))
+            {
+                audioSource.volume = 0.5f;
+            }
             soundDictionary.Add(audioData.audioKey, audioSource);
         });
         ready = true;

@@ -9,4 +9,7 @@ public class GlobalConfig : ScriptableObject
     public float minDistanceBetweenEnemies = 2.0f;
     public float spawnOffsetFromScreen = 1.0f;
     public int maxProjectiles = 20;
+    public int maxPotions = 10;
+    public float potionDropChance = 0.3f;
+    public List<string> objectTagsThatDontCollideWithProjectiles;
 }

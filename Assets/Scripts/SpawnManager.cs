@@ -14,6 +14,9 @@ public class SpawnManager : MonoBehaviour
     private List<GameObject> projectilePool = new List<GameObject>();
     private List<GameObject> activeProjectiles = new List<GameObject>();
     [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private GameObject potionPrefab;
+    private List<GameObject> potionPool = new List<GameObject>();
+    private List<GameObject> activePotions = new List<GameObject>();
     public bool loopHasStarted { get; private set; } = false;
     private float spawnDelay;
     private float minDistanceBetweenEnemies;
@@ -24,23 +27,27 @@ public class SpawnManager : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-        Utils.Instance.SetLimits();
+    }
+
+    void Start()
+    {
         // levelsConfig = GameManager.Instance.levelsConfig;
         globalConfig = GameManager.Instance.globalConfig;
         spawnDelay = globalConfig.spawnDelay;
         minDistanceBetweenEnemies = globalConfig.minDistanceBetweenEnemies;
         spawnOffsetFromScreen = globalConfig.spawnOffsetFromScreen;
-        PopulateSpawnPool();
-        PopulateProjectilePool();
     }
-
     public void StartEnemySpawnLoop()
     {
         loopHasStarted = true;
+        Utils.Instance.SetLimits();
+        PopulateSpawnPool();
+        PopulateProjectilePool();
+        PopulatePotionPool();
         StartCoroutine(SpawnLoop());
     }
 
-    private IEnumerator SpawnLoop()
+    public IEnumerator SpawnLoop()
     {
         yield return new WaitForSeconds(spawnDelay); // initial delay before spawning
         while (true)
@@ -129,8 +136,8 @@ public class SpawnManager : MonoBehaviour
 
     private Vector3 GetValidSpawnPosition()
     {
-        float topBound = Utils.Instance.topLimit + 2.0f;
-        float bottomBound = Utils.Instance.bottomLimit - 2.0f;
+        float topBound = Utils.Instance.topLimit - 2.0f;
+        float bottomBound = Utils.Instance.bottomLimit + 2.0f;
         float leftBound = Utils.Instance.leftLimit - spawnOffsetFromScreen;
         float rightBound = Utils.Instance.rightLimit + spawnOffsetFromScreen;
 
@@ -164,7 +171,7 @@ public class SpawnManager : MonoBehaviour
         {
             if (enemy.activeInHierarchy)
             {
-                float distance = Vector3.Distance(position, enemy.transform.position);
+                float distance = Mathf.Abs(position.y - enemy.transform.position.y);
                 if (distance < minDistanceBetweenEnemies)
                     return false;
             }
@@ -248,7 +255,6 @@ public class SpawnManager : MonoBehaviour
             var enemy = currentSpawned[i];
             KillSpawn(enemy);
         }
-        currentSpawned.Clear(); // Just to be sure
     }
     public void RetrieveAllProjectiles()
     {
@@ -260,21 +266,84 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-public void ChangeEnemyStatesToSeek()
-{
-    Debug.Log("Changing all enemies to Seek State...");
-
-    List<GameObject> enemies = currentSpawned
-        .Concat(enemyPool)
-        .ToList();
-
-    foreach (GameObject enemyGO in enemies)
+    public void ChangeEnemyStatesToSeek()
     {
-        Enemy enemy = enemyGO.GetComponent<Enemy>();
-        Debug.Log("Changing enemy " + enemy.name + " to Seek State.");
-        Debug.Log("Current State: " + enemy.currentState.GetType().Name);
-        Debug.Log("Enemy Seek State instance: " + enemy.states["Seek"].GetType().Name);
-        enemy.ChangeState(enemy.states["Seek"]);
+        Debug.Log("Changing all enemies to Seek State...");
+
+        List<GameObject> enemies = currentSpawned
+            .Concat(enemyPool)
+            .ToList();
+
+        foreach (GameObject enemyGO in enemies)
+        {
+            Enemy enemy = enemyGO.GetComponent<Enemy>();
+            Debug.Log("Changing enemy " + enemy.name + " to Seek State.");
+            Debug.Log("Current State: " + enemy.currentState.GetType().Name);
+            Debug.Log("Enemy Seek State instance: " + enemy.states["Seek"].GetType().Name);
+            enemy.ChangeState(enemy.states["Seek"]);
+        }
     }
-}
+
+    private void PopulatePotionPool()
+    {
+        for (int i = 0; i < globalConfig.maxPotions; i++)
+        {
+            GameObject potion = Instantiate(potionPrefab);
+            potion.SetActive(false);
+            potionPool.Add(potion);
+        }
+    }
+
+    public void SpawnPotionAtPosition(Vector3 position)
+    {
+        GameObject potion = potionPool.Find(p => !p.activeInHierarchy);
+        if (potion != null)
+        {
+            potion.transform.position = position;
+            Utils.Instance.ChangeLayerTo(potion, "Interactable");
+            potion.SetActive(true);
+            potionPool.Remove(potion);
+            activePotions.Add(potion);
+        }
+        else
+        {
+            Debug.LogWarning("No available potions in the pool!");
+        }
+    }
+
+    public void RetrievePotion(GameObject potion)
+    {
+        potion.SetActive(false);
+        potionPool.Add(potion);
+        activePotions.Remove(potion);
+    }
+
+    public void RetrieveAllPotions()
+    {
+        Debug.Log("Retrieving all potions...");
+        Debug.Log("Active potions count: " + activePotions.Count);
+        for (int i = activePotions.Count - 1; i >= 0; i--)
+        {
+            var potion = activePotions[i];
+            Debug.Log("Retrieving potion: " + potion.name);
+            RetrievePotion(potion);
+        }
+    }
+
+    public void ResetState()
+    {
+        loopHasStarted = false;
+        StopAllCoroutines();
+        CleanLists();
+    }
+
+    public void CleanLists()
+    {
+        enemyPool.Clear();
+        projectilePool.Clear();
+        potionPool.Clear();
+        currentSpawned.Clear();
+        activeProjectiles.Clear();
+        activePotions.Clear();
+    }
 }

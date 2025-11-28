@@ -20,7 +20,6 @@ public class PauseState : IGameState
     public void ExitState(GameManager manager)
     {
         Debug.Log("Exiting Pause State");
-        manager.StartGame();
         manager.uiManager.HidePauseMenu();
     }
     public void HandleEscapeKey(GameManager manager)

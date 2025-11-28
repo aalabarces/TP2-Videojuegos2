@@ -298,8 +298,8 @@ MonoBehaviour:
   scoreValue: 10
   maxSpeed: 1
   currentVelocity: {x: 0, y: 0}
-  baseHealth: 10
-  health: 10
+  baseHealth: 15
+  health: 15
   color: {r: 1, g: 1, b: 1, a: 1}
   enemyType: EnemyBoss
   cannon: {fileID: 1412967194802973343}

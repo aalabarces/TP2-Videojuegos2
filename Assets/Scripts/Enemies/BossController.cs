@@ -252,6 +252,21 @@ public class Boss : Enemy
         cannon.GetComponent<SpriteRenderer>().color = newColor;
     }
 
+    public override void GetHit(float damage, Color col)
+    {
+        Debug.Log($"Boss got hit with damage {damage} and color {col}. Current health: {health}. Current color: {color}");
+        if (color != col) return;
+
+        health -= damage;
+        Debug.Log($"Boss health after hit: {health}");
+        UIManager.Instance.UpdateBossHealth(health, baseHealth);
+        if (health <= 0)
+        {
+            Debug.Log($"Boss has died.");
+            Die();
+        }
+    }
+
     public void CheatKill()
     {
         Die();

@@ -7,7 +7,8 @@ public class ActiveState : IGameState
         Debug.Log("Entering Active State");
         manager.StartGame();
         AudioManager.Instance.ChangeState(AudioManager.Instance.audioStates["Active"]);
-        CursorManager.Instance.SetCrosshairCursor();
+        // CursorManager.Instance.SetCrosshairCursor();
+        manager.uiManager.ShowHud();
     }
 
     public void UpdateState(GameManager manager)
@@ -41,7 +42,7 @@ public class ActiveState : IGameState
     {
         Debug.Log("Exiting Active State");
         manager.StopGame();
-        CursorManager.Instance.SetDefaultCursor();
+        // CursorManager.Instance.SetDefaultCursor();
     }
 
     private void handleClick(GameManager manager)

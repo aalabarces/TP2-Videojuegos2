@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -93,13 +94,16 @@ public class MenuManager : MonoBehaviour
     public void OnVolumeSliderChanged(float value)
     {
         AudioManager.Instance.SetMasterVolume(value);
+        PlayerPrefs.SetFloat("masterVolume", value);
     }
     public void OnMusicVolumeSliderChanged(float value)
     {
         AudioManager.Instance.SetMusicVolume(value);
+        PlayerPrefs.SetFloat("musicVolume", value);
     }
     public void OnFXVolumeSliderChanged(float value)
     {
         AudioManager.Instance.SetFXVolume(value);
+        PlayerPrefs.SetFloat("fxVolume", value);
     }
 }

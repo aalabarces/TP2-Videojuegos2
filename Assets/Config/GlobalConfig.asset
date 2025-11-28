@@ -35,3 +35,8 @@ MonoBehaviour:
   minDistanceBetweenEnemies: 2
   spawnOffsetFromScreen: 1
   maxProjectiles: 20
+  maxPotions: 10
+  potionDropChance: 0.3
+  objectTagsThatDontCollideWithProjectiles:
+  - TriggerButton
+  - Potion

@@ -21,10 +21,23 @@ public class UIManager : MonoBehaviour
     [SerializeField] public GameObject defeatScreen;
     [SerializeField] public GameObject fakeBack;
     [SerializeField] public GameObject colorTriggersGO;
+    [SerializeField] public Sprite heartFull;
+    [SerializeField] public Sprite heartHalf;
+    [SerializeField] public Sprite heartEmpty;
+    [SerializeField] public GameObject heartsContainer;
+    [SerializeField] private float heartSpacing = 100f;
+    [SerializeField] Slider bossHealthBar;
     private List<GameObject> colorTriggers = new List<GameObject>();
     public GameObject dialogue;
     public Title title;
     private TextMeshProUGUI[] textElements;
+    [SerializeField] public GameObject prettyTimer;
+    [SerializeField] public Image clockFillImage;
+    [SerializeField] public Image clockFaceImage;
+    [SerializeField] private Slider sliderMasterVolume;
+    [SerializeField] private Slider sliderMusicVolume;
+    [SerializeField] private Slider sliderFXVolume;
+    private float maxTime;
 
     void Awake()
     {
@@ -41,12 +54,13 @@ public class UIManager : MonoBehaviour
         {
             colorTriggers.Add(child.gameObject);
         }
-        HideEverything();
+        restartBtn.onClick.AddListener(OnRestartButtonClicked);
+        exitBtn.onClick.AddListener(BackToMainMenu);
         UpdateScore(GameManager.Instance.score);
         UpdateTimer(GameManager.Instance.gameTimer);
-        restartBtn.onClick.AddListener(OnRestartButtonClicked);
-        exitBtn.onClick.AddListener(() => GlobalSceneManager.Instance.GoToMainMenu());
         HideEverything();
+        getVolumeSettingsFromPrefsAndApply();
+        addEventListenersToVolumeSliders();
     }
 
     public void HideEverything()
@@ -66,24 +80,153 @@ public class UIManager : MonoBehaviour
         restartBtn.gameObject.SetActive(false);
         dialogue.SetActive(false);
         pauseMenu.SetActive(false);
+        bossHealthBar.gameObject.SetActive(false);
+        prettyTimer.SetActive(false);
+        HideHearts();
+    }
+
+    public void ShowHud()
+    {
+        scoreText.gameObject.SetActive(true);
+        UpdateScore(GameManager.Instance.score);
+        if (GameManager.Instance.currentLevel < 1.5f) 
+        {
+            livesText.gameObject.SetActive(true);
+            UpdateLives(GameManager.Instance.player.maxLives);
+            prettyTimer.SetActive(false);
+            timerText.gameObject.SetActive(true);
+        }
+        else 
+        {
+            ChangeLivesTextToHearts();
+            timerText.gameObject.SetActive(false);
+            prettyTimer.SetActive(true);
+        }
+        UpdateTimer(GameManager.Instance.gameTimer);
+        if (GameManager.Instance.currentLevel == 3f)
+        {
+            bossHealthBar.gameObject.SetActive(true);
+        }
+        else
+        {
+            bossHealthBar.gameObject.SetActive(false);
+        }
     }
 
     public void UpdateScore(int newScore)
     {
-        scoreText.text = "Score: " + newScore;
+        if (scoreText == null) return;
+        scoreText.text = newScore.ToString();
+    }
+
+
+    public void InitializeHearts(int maxLives)
+    {
+        // Clear existing hearts
+        foreach (Transform child in heartsContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        int neededHearts = Mathf.CeilToInt(maxLives / 2f);
+        for (int i = 0; i < neededHearts; i++)
+        {
+            GameObject newHeart = new GameObject("Heart", typeof(Image));
+            newHeart.transform.SetParent(heartsContainer.transform, false);
+            newHeart.GetComponent<Image>().preserveAspect = true;
+            newHeart.GetComponent<Image>().sprite = heartFull;
+
+            // Set position with offset
+            RectTransform rectTransform = newHeart.GetComponent<RectTransform>();
+            rectTransform.anchorMin = new Vector2(0, 0.5f);
+            rectTransform.anchorMax = new Vector2(0, 0.5f);
+            rectTransform.pivot = new Vector2(0, 0.5f);
+            rectTransform.anchoredPosition = new Vector2(i * heartSpacing, 0);
+        }
     }
 
     public void UpdateLives(int newLives)
     {
-        livesText.text = "Lives: " + newLives;
+        if (livesText == null) return;
+        if (GameManager.Instance.currentLevel < 1.5f) livesText.text = "Vidas: " + newLives;
+        else UpdateHearts(newLives);
+    }
+
+    private void UpdateHearts(int newLives)
+    {
+        if (heartsContainer == null) return;
+        for (int i = 0; i < heartsContainer.transform.childCount; i++)
+        {
+            Image heartImage = heartsContainer.transform.GetChild(i).GetComponent<Image>();
+            if (newLives >= (i + 1) * 2)
+            {
+                heartImage.sprite = heartFull;
+            }
+            else if (newLives == (i * 2) + 1)
+            {
+                heartImage.sprite = heartHalf;
+            }
+            else
+            {
+                heartImage.sprite = heartEmpty;
+            }
+        }
+    }
+
+    public void ChangeLivesTextToHearts()
+    {
+        ShowHearts();
+        livesText.gameObject.SetActive(false);
+    }
+    
+    public void HideHearts()
+    {
+        heartsContainer.SetActive(false);
+    }
+
+    public void ShowHearts()
+    {
+        heartsContainer.SetActive(true);
+    }
+
+    public void InitializeTimer(float maxTime)
+    {
+        this.maxTime = maxTime;
+        if (clockFillImage != null) clockFillImage.fillAmount = 0;
+        if (clockFaceImage != null) clockFaceImage.color = Color.white;
     }
 
     public void UpdateTimer(float newTime)
     {
-        if (newTime == 0) { timerText.text = ""; return; }
-        int minutes = Mathf.FloorToInt(newTime / 60f);
-        int seconds = Mathf.FloorToInt(newTime % 60f);
-        timerText.text = minutes.ToString("0") + ":" + seconds.ToString("00");
+        if (timerText != null)
+        {
+            if (newTime == 0) { timerText.text = ""; }
+            else
+            {
+                int minutes = Mathf.FloorToInt(newTime / 60f);
+                int seconds = Mathf.FloorToInt(newTime % 60f);
+                timerText.text = minutes.ToString("0") + ":" + seconds.ToString("00");
+            }
+        }
+
+        if (clockFillImage != null && maxTime > 0)
+        {
+            clockFillImage.fillAmount = 1 - (newTime / maxTime);
+        }
+
+        if (clockFaceImage != null && maxTime > 0)
+        {
+            if (newTime / maxTime <= 0.25f && newTime > 0)
+            {
+                // Flashing effect
+                float t = Mathf.PingPong(Time.time * 5f, 1f);
+                clockFaceImage.color = Color.Lerp(Color.white, Color.red, t);
+            }
+            else
+            {
+                clockFaceImage.color = Color.white;
+            }
+        }
     }
 
     public void UpdateCountdown(string newCountdown)
@@ -174,11 +317,64 @@ public class UIManager : MonoBehaviour
 
     public void BackToMainMenu()
     {
-        GameManager.Instance.ChangeState(GameManager.Instance.gameStates["Inactive"]);
+        GameManager.Instance.OnExitGameScene();
         GlobalSceneManager.Instance.GoToMainMenu();
     }
     public void ResumeGameplay()
     {
         GameManager.Instance.ChangeState(GameManager.Instance.gameStates["Active"]);
+    }
+
+    public void UpdateBossHealth(float current, float max)
+    {
+        bossHealthBar.value = current / max;
+    }
+
+    private void getVolumeSettingsFromPrefsAndApply()
+    {
+        float masterVolume = PlayerPrefs.GetFloat("masterVolume", 1.0f);
+        float musicVolume = PlayerPrefs.GetFloat("musicVolume", 1.0f);
+        float fxVolume = PlayerPrefs.GetFloat("fxVolume", 1.0f);
+
+        AudioManager.Instance.SetMasterVolume(masterVolume);
+        AudioManager.Instance.SetMusicVolume(musicVolume);
+        AudioManager.Instance.SetFXVolume(fxVolume);
+
+        if (sliderMasterVolume != null) sliderMasterVolume.value = masterVolume;
+        if (sliderMusicVolume != null) sliderMusicVolume.value = musicVolume;
+        if (sliderFXVolume != null) sliderFXVolume.value = fxVolume;
+    }
+
+    private void addEventListenersToVolumeSliders()
+    {
+        if (sliderMasterVolume != null)
+        {
+            sliderMasterVolume.onValueChanged.AddListener((value) =>
+            {
+                AudioManager.Instance.SetMasterVolume(value);
+                PlayerPrefs.SetFloat("masterVolume", value);
+                AudioManager.Instance.PlaySound("UI_Click");
+            });
+        }
+
+        if (sliderMusicVolume != null)
+        {
+            sliderMusicVolume.onValueChanged.AddListener((value) =>
+            {
+                AudioManager.Instance.SetMusicVolume(value);
+                PlayerPrefs.SetFloat("musicVolume", value);
+                AudioManager.Instance.PlaySound("UI_Click");
+            });
+        }
+
+        if (sliderFXVolume != null)
+        {
+            sliderFXVolume.onValueChanged.AddListener((value) =>
+            {
+                AudioManager.Instance.SetFXVolume(value);
+                PlayerPrefs.SetFloat("fxVolume", value);
+                AudioManager.Instance.PlaySound("UI_Click");
+            });
+        }
     }
 }

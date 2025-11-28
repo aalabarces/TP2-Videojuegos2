@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
@@ -85,12 +86,17 @@ public class Projectile : MonoBehaviour
             // por qué no tiene un GetHit? Eso no es muy "objetoso"
             // todos los que pueden recibir daño tendrían que tener un componente común
         }
-        if (!collision.gameObject.CompareTag("TriggerButton"))
+        if (IsCollidable(collision.gameObject.tag))
         {
             audioSource.Play();
             animator.SetBool("die", true);
             direction = Vector2.zero; // stop moving
         }
+    }
+
+    private bool IsCollidable(string tag)
+    {
+        return !GameManager.Instance.globalConfig.objectTagsThatDontCollideWithProjectiles.Contains(tag);
     }
 
     public void TellSpawnManagerToKillMe()

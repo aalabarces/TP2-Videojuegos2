@@ -203,6 +203,52 @@ MonoBehaviour:
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
+--- !u!1 &165529868
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 165529869}
+  - component: {fileID: 165529870}
+  m_Layer: 0
+  m_Name: SpawnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &165529869
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165529868}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.0298157, y: -0.002822876, z: 10.0488405}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 923517319}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &165529870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165529868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce4eaa0a3015da04d9c5094c20031133, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 5721063992142405918, guid: f5d507f1a62c57943bcf1e2867f6c402, type: 3}
+  potionPrefab: {fileID: 301968692461747684, guid: a502f1f6d1e3cb84783d13c30cfb67fc, type: 3}
 --- !u!1 &923517318
 GameObject:
   m_ObjectHideFlags: 0
@@ -236,6 +282,7 @@ Transform:
   - {fileID: 1111914440}
   - {fileID: 134556250}
   - {fileID: 1622875475}
+  - {fileID: 165529869}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &923517320
@@ -363,7 +410,6 @@ MonoBehaviour:
   animationSpeed: 0.05
   crosshairCursor: {fileID: 2800000, guid: f04b545715b58564e81569842cea37c1, type: 3}
   hotspotDefault: {x: 9, y: 8}
-  hotspotCrosshair: {x: 16, y: 16}
 --- !u!1 &1622875474
 GameObject:
   m_ObjectHideFlags: 0

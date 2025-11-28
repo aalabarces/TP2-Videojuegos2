@@ -25,3 +25,9 @@ MonoBehaviour:
     audioClips: {fileID: 8300000, guid: 902904e275ba542439655669fc10530a, type: 3}
   - audioKey: UI_Countdown_1
     audioClips: {fileID: 8300000, guid: 71965b0d8fb795140b3e12e2af5c31b0, type: 3}
+  - audioKey: FX_Fire
+    audioClips: {fileID: 8300000, guid: eab2a0303692eaf48b5cdd834b8288a4, type: 3}
+  - audioKey: Music_Victory
+    audioClips: {fileID: 8300000, guid: 6eba47ee5c417cd42b1acec64c590ff1, type: 3}
+  - audioKey: FX_Heal
+    audioClips: {fileID: 8300000, guid: 9baeaf3fb504cd04f9618c3139b31caf, type: 3}
