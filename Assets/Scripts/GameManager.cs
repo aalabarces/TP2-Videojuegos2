@@ -112,7 +112,7 @@ public class GameManager : MonoBehaviour
         currentLevel = act;
         PlayerPrefs.SetFloat("currentLevel", currentLevel);
         PlayerPrefs.Save();
-        
+        SpawnManager.Instance.spawnDelay = currentLevelData.spawnInterval;
         if (act < 2f) UIManager.Instance.HideColorTriggers();
         else UIManager.Instance.ShowColorTriggers();
         ChangeState(gameStates["Inactive"]);
@@ -121,6 +121,7 @@ public class GameManager : MonoBehaviour
             // Show Act Title Screen
             if (act == 2f) StartCoroutine(uiManager.title.StartColorTitleCoroutine());
             uiManager.title.SetupTitles(currentLevelData.titles);
+            // StartCoroutine(uiManager.title.StopTitleIfKeyPressed());
             yield return uiManager.title.ShowTitle();
         }
         

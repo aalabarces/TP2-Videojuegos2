@@ -794,6 +794,7 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 0, g: 0, b: 1, a: 1}
   - {r: 0, g: 1, b: 0, a: 1}
+  isPlaying: 0
 --- !u!114 &136132142
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -21,9 +21,6 @@ public class InactiveState : IGameState
     }
     public void HandleEscapeKey(GameManager manager)
     {
-        if (manager.uiManager.title.titlePanel.activeInHierarchy)
-        {
-            manager.StartCoroutine(manager.uiManager.title.StopTitleIfKeyPressed());
-        }
+        // Do nothing
     }
 }

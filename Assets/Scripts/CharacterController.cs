@@ -10,7 +10,6 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
-    private AudioSource engineSound;
     [SerializeField]
     public GameObject cannon;
     private SpriteRenderer cannonSpriteRenderer;
@@ -34,7 +33,6 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
-        engineSound = GetComponent<AudioSource>();
         cannonSpriteRenderer = cannon.GetComponent<SpriteRenderer>();
     }
     void Start()
@@ -83,17 +81,17 @@ public class Player : MonoBehaviour
         if (Mathf.Abs(verticalInput) > 0.01f)
         {   // Moving
             animator.SetBool("isMoving", true);
-            if (!engineSound.isPlaying)
+            if (!AudioManager.Instance.IsSoundPlaying("FX_Engine"))
             {
-                engineSound.Play();
+                AudioManager.Instance.PlaySound("FX_Engine");
             }
         }
         else
         {   // Not Moving
             animator.SetBool("isMoving", false);
-            if (engineSound.isPlaying)
+            if (AudioManager.Instance.IsSoundPlaying("FX_Engine"))
             {
-                engineSound.Stop();
+                AudioManager.Instance.StopSound("FX_Engine");
             }
         }
     }
@@ -144,7 +142,7 @@ public class Player : MonoBehaviour
         {
             Debug.Log("Game Over!");
             // animator.SetTrigger("Die");
-            engineSound.Stop();
+            AudioManager.Instance.StopSound("FX_Engine");
             StartCoroutine(GameManager.Instance.GameOver());
         }
     }

@@ -6,13 +6,11 @@ using Vector3 = UnityEngine.Vector3;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(AudioSource))]
 [RequireComponent(typeof(SpriteRenderer))]
 public class Projectile : MonoBehaviour
 {
     private Rigidbody2D rb;
     private Animator animator;
-    private AudioSource audioSource;
     private SpriteRenderer spriteRenderer;
     [SerializeField] private float speed = 10f;
     [SerializeField] private float strength = 1f;
@@ -23,7 +21,6 @@ public class Projectile : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        audioSource = GetComponent<AudioSource>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
@@ -88,7 +85,7 @@ public class Projectile : MonoBehaviour
         }
         if (IsCollidable(collision.gameObject.tag))
         {
-            audioSource.Play();
+            AudioManager.Instance.PlaySound("FX_Explosion");
             animator.SetBool("die", true);
             direction = Vector2.zero; // stop moving
         }

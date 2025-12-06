@@ -44,6 +44,7 @@ public class LevelData
     public float act;
     public float timer;
     public EnemyData enemyData;
+    public float spawnInterval;
     public TitleData titles;
     public AvailableLootData availableLoot;
 }

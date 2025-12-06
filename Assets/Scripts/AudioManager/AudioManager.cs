@@ -83,6 +83,15 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    public bool IsSoundPlaying(string soundName)
+    {
+        if (soundDictionary.ContainsKey(soundName))
+        {
+            return soundDictionary[soundName].isPlaying;
+        }
+        return false;
+    }
+
     public void SetMasterVolume(float volume)
     {
         masterVolume = volume;

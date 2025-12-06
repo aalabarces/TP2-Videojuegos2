@@ -2,16 +2,13 @@ using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(AudioSource))]
 public class AimingScript : MonoBehaviour
 {
     private Animator animator;
-    private AudioSource audioSource;
     private bool isPlayer => gameObject.transform.parent.CompareTag("Player");
     void Awake()
     {
         animator = GetComponent<Animator>();
-        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -53,7 +50,6 @@ public class AimingScript : MonoBehaviour
     }
     public void PlayCannonSound()
     {
-        audioSource.Play();
-        if (!isPlayer) audioSource.volume = 0.75f;
+        AudioManager.Instance.PlaySound("FX_Fire");
     }
 }

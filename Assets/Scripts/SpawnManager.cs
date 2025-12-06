@@ -18,7 +18,7 @@ public class SpawnManager : MonoBehaviour
     private List<GameObject> potionPool = new List<GameObject>();
     private List<GameObject> activePotions = new List<GameObject>();
     public bool loopHasStarted { get; private set; } = false;
-    private float spawnDelay;
+    public float spawnDelay;
     private float minDistanceBetweenEnemies;
     private float spawnOffsetFromScreen;
 
@@ -181,8 +181,13 @@ public class SpawnManager : MonoBehaviour
 
     public void KillSpawn(GameObject enemy)
     {   // TODO: tendría que ser más abstracto, para cualquier tipo de spawnable object
-        currentSpawned.Remove(enemy);
-        enemy.SetActive(false);
+        if (enemy) {
+            currentSpawned.Remove(enemy);
+            enemy.SetActive(false);
+        } else {
+            Debug.LogWarning("Trying to kill a null enemy spawn.");
+            return;
+        }
     }
 
     private void PopulateSpawnPool()

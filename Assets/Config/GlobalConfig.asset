@@ -31,6 +31,9 @@ MonoBehaviour:
   - prefab: {fileID: 9117074348808057536, guid: c8e993c648931df4bb318b0730c4d001, type: 3}
     maxPoolSize: 1
     objectType: EnemyBoss
+  - prefab: {fileID: 1531196551610668500, guid: 2b7480e0342d1fb45a2c6e340546309b, type: 3}
+    maxPoolSize: 5
+    objectType: EnemyBW
   spawnDelay: 3
   minDistanceBetweenEnemies: 2
   spawnOffsetFromScreen: 1
@@ -40,3 +43,4 @@ MonoBehaviour:
   objectTagsThatDontCollideWithProjectiles:
   - TriggerButton
   - Potion
+  - Zone

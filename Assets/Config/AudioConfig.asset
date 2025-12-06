@@ -31,3 +31,7 @@ MonoBehaviour:
     audioClips: {fileID: 8300000, guid: 6eba47ee5c417cd42b1acec64c590ff1, type: 3}
   - audioKey: FX_Heal
     audioClips: {fileID: 8300000, guid: 9baeaf3fb504cd04f9618c3139b31caf, type: 3}
+  - audioKey: FX_Explosion
+    audioClips: {fileID: 8300000, guid: 37349b5e2d8642341b2dbcdc6b0705fb, type: 3}
+  - audioKey: FX_Engine
+    audioClips: {fileID: 8300000, guid: 35131d29611eb534cb5aeedaa26a1f6a, type: 3}

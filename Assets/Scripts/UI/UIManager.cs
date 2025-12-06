@@ -99,8 +99,14 @@ public class UIManager : MonoBehaviour
         else 
         {
             ChangeLivesTextToHearts();
-            timerText.gameObject.SetActive(false);
-            prettyTimer.SetActive(true);
+            if (GameManager.Instance.timerIsActive) {
+                timerText.gameObject.SetActive(false);
+                prettyTimer.SetActive(true);
+            }
+            else {
+                prettyTimer.SetActive(false);
+                timerText.gameObject.SetActive(false);
+            }
         }
         UpdateTimer(GameManager.Instance.gameTimer);
         if (GameManager.Instance.currentLevel == 3f)

@@ -6,7 +6,6 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(SpriteRenderer))]
-[RequireComponent(typeof(AudioSource))]
 public class Enemy : MonoBehaviour
 {
     public Rigidbody2D rb;
@@ -14,7 +13,6 @@ public class Enemy : MonoBehaviour
     protected SpriteRenderer sr;
     public Vector2 direction;
     public Vector2 velocity;
-    protected AudioSource audioSource;
     protected float extraMargin; // for out of bounds detection
     [SerializeField] public float growthMultiplier = 1.5f; // multiplier for after first act
     [SerializeField] public float scoreValue = 10;
@@ -31,7 +29,6 @@ public class Enemy : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         // Debug.Log("Animator found: " + animator);
-        audioSource = GetComponent<AudioSource>();
         sr = GetComponent<SpriteRenderer>();
 
         states.Add("Simple", new SimpleState());
@@ -90,7 +87,7 @@ public class Enemy : MonoBehaviour
     public virtual void Die()
     {
         animator.SetBool("isDead", true);
-        audioSource.Play();
+        AudioManager.Instance.PlaySound("FX_Explosion");
         Utils.Instance.ChangeLayerTo(this.gameObject, "Non-interactable");
         GameManager.Instance.PlayerKilledEnemy(gameObject);
         // Invoke(nameof(TellSpawnManagerToKillMe), 0.5f);

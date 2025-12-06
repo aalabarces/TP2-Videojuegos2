@@ -17,6 +17,7 @@ public class Title : MonoBehaviour
     public bool isPlayingColorCoroutine { get; private set; } = false;
     [SerializeField] private float colorAnimationDuration = 1.0f;
     [SerializeField] private List<Color> colorCycle = new List<Color>() { Color.white, Color.blue, Color.green };
+    public bool isPlaying = false;
 
     void Awake()
     {
@@ -60,7 +61,7 @@ public class Title : MonoBehaviour
     public IEnumerator ShowTitle()
     {
         skipTitle = false;
-        // StartCoroutine(StopTitleIfKeyPressed());
+        StartCoroutine(StopTitleIfKeyPressed());
         Debug.Log("Showing title screen...");
         backgroundPanel.SetActive(true);
         titleText.alpha = 1.0f;
@@ -79,14 +80,15 @@ public class Title : MonoBehaviour
         yield return new WaitUntil(() => Input.anyKey);
         yield return PlayFadeOutAll();
         skipTitle = true;
+        isPlayingColorCoroutine = false;
     }
 
     public IEnumerator StopTitleIfKeyPressed()
     {
-                // Skip temporarily disabled
+        Debug.Log("Listening for key press to skip title...");
         while (!skipTitle)
         {
-            if (Input.anyKeyDown)
+            if (Input.GetKeyDown(KeyCode.Escape)) // only escape key to skip
             {
 
                 Debug.Log("Key pressed, stopping title screen...");
@@ -98,6 +100,7 @@ public class Title : MonoBehaviour
             yield return null;
         }
         skipTitle = false;
+        Debug.Log("Stopped listening for key press.");
     }
 
     private IEnumerator PlayFadeInAnimation(TMPro.TextMeshProUGUI textElement)

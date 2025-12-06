@@ -21,6 +21,7 @@ MonoBehaviour:
         spawnProbability: 1
       firstEnemyType: EnemyBasic
       maxEnemiesAtOnce: 4
+    spawnInterval: 3
     titles:
       act: 1
       title: Primer acto
@@ -43,6 +44,7 @@ MonoBehaviour:
         spawnProbability: 0.1
       firstEnemyType: EnemyFast
       maxEnemiesAtOnce: 7
+    spawnInterval: 2
     titles:
       act: 0
       title: 
@@ -69,6 +71,7 @@ MonoBehaviour:
         spawnProbability: 0.2
       firstEnemyType: EnemyBlue
       maxEnemiesAtOnce: 10
+    spawnInterval: 3
     titles:
       act: 2
       title: Segundo Acto
@@ -83,10 +86,11 @@ MonoBehaviour:
     timer: 0
     enemyData:
       availableEnemies:
-      - name: EnemyBoss
+      - name: EnemyBW
         spawnProbability: 1
       firstEnemyType: EnemyBoss
-      maxEnemiesAtOnce: 1
+      maxEnemiesAtOnce: 3
+    spawnInterval: 5
     titles:
       act: 3
       title: Tercer acto

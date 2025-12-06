@@ -9,6 +9,7 @@ TagManager:
   - FakeBack
   - Cannon
   - Potion
+  - Zone
   layers:
   - Default
   - TransparentFX
